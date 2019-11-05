@@ -1,5 +1,8 @@
 # Curso-R-BdeC
 
+Curso interno armado a partir de [Notas de clase del curso de introducción a Data Science. Práctica Guiada. Diego Kozlowski y Natsumi Shokida ] (https://diegokoz.github.io/intro_ds_bookdown/index.html)
+
+
 ## Clase 1: 19-11
 * Descripción del programa “R”. Lógica sintáctica del lenguaje y comandos básicos
 * Presentación de la plataforma RStudio para trabajar en “R”
