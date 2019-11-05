@@ -4,6 +4,7 @@ Curso interno armado a partir de [Notas de clase del curso de introducción a Da
 
 
 ## Clase 1: 19-11
+### Introducción a R y R-Studio
 * Descripción del programa “R”. Lógica sintáctica del lenguaje y comandos básicos
 * Presentación de la plataforma RStudio para trabajar en “R”
 * Caracteres especiales en “R”
