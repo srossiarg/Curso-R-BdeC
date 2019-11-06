@@ -2,6 +2,10 @@
 
 Curso interno armado a partir de [Notas de clase del curso de introducción a Data Science. Práctica Guiada. Diego Kozlowski y Natsumi Shokida ](https://diegokoz.github.io/intro_ds_bookdown/index.html)
 
+# Prerrequisitos
+* Instalar R y RStudio. [Ver instrucciones seccion 1.4](https://es.r4ds.hadley.nz/introducci%C3%B3n.html)
+
+# Programa
 
 ## Clase 1: 19-11
 ### Introducción a R y RStudio
