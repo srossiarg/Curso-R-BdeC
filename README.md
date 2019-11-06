@@ -1,7 +1,13 @@
 # Curso-R-BdeC
 
 # Prerrequisitos
-* Instalar R y RStudio. [Ver instrucciones secciones 1.4.1 y 1.4.2](https://es.r4ds.hadley.nz/introducci%C3%B3n.html)
+
+En el curso vamos a usar el lenguaje de programación R y la interfaz de desarrollo RStudio. Esto implica que necesitamos una computadora (en lo posible, que tenga 4gb de memoria RAM o superior) y descargar e instalar tanto R como RStudio en nuestras computadoras.
+
+Descargar instalar estos dos softwares es muy simple ya que son gratuitos. R de hecho es un lenguaje de programación open source, o de código abierto, lo que significa que cualquiera puede colaborar. [Haciendo click aquí](https://cran.r-project.org/) van a poder descargar la última versión de R para Windows, Mac o Linux. Una vez que lo hayan descargado solo tienen que instalarlo.
+
+Ahora [descarguen RStudio](https://rstudio.com/products/rstudio/download/), también van a poder elegir la versión que corresponde según su sistema operativo. RStudio va a identificar automáticamente la versión de R que ya tienen instalada, por lo que es importante que instalen RStudio luego de haber instalado R.
+
 
 # Programa
 
