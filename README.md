@@ -43,3 +43,7 @@ Curso interno armado a partir de [Notas de clase del curso de introducción a Da
 
 * [Notas de clase del curso de introducción a Data Science. Práctica Guiada. Diego Kozlowski y Natsumi Shokida ](https://diegokoz.github.io/intro_ds_bookdown/index.html)
 * [Wickham, H., & Grolemund, G. (2016). R for data science: import, tidy, transform, visualize, and model data. " O'Reilly Media, Inc.".](https://es.r4ds.hadley.nz/)
+
+* [Vazquez Brust, A. (2019) Ciencia de Datos para Gente Sociable Una introducción a la exploración, análisis y visualización de datos](https://bitsandbricks.github.io/ciencia_de_datos_gente_sociable/)
+
+* [Martin Montane Ciencia de datos para curiosos](https://bookdown.org/martinmontaneb/CienciaDeDatos/)
