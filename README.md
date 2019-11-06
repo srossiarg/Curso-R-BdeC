@@ -1,6 +1,6 @@
 # Curso-R-BdeC
 
-Curso interno armado a partir de [Notas de clase del curso de introducción a Data Science. Práctica Guiada. Diego Kozlowski y Natsumi Shokida ] (https://diegokoz.github.io/intro_ds_bookdown/index.html)
+Curso interno armado a partir de [Notas de clase del curso de introducción a Data Science. Práctica Guiada. Diego Kozlowski y Natsumi Shokida ](https://diegokoz.github.io/intro_ds_bookdown/index.html)
 
 
 ## Clase 1: 19-11
@@ -41,5 +41,5 @@ Curso interno armado a partir de [Notas de clase del curso de introducción a Da
 
 # Referencias
 
-* [Notas de clase del curso de introducción a Data Science. Práctica Guiada. Diego Kozlowski y Natsumi Shokida ] (https://diegokoz.github.io/intro_ds_bookdown/index.html)
-* [Wickham, H., & Grolemund, G. (2016). R for data science: import, tidy, transform, visualize, and model data. " O'Reilly Media, Inc.".] (https://es.r4ds.hadley.nz/)
+* [Notas de clase del curso de introducción a Data Science. Práctica Guiada. Diego Kozlowski y Natsumi Shokida ](https://diegokoz.github.io/intro_ds_bookdown/index.html)
+* [Wickham, H., & Grolemund, G. (2016). R for data science: import, tidy, transform, visualize, and model data. " O'Reilly Media, Inc.".](https://es.r4ds.hadley.nz/)
