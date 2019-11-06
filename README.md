@@ -13,7 +13,7 @@ Curso interno armado a partir de [Notas de clase del curso de introducción a Da
 * Tipos de variable (numérica, de caracteres, lógicas)
 * Lectura y Escritura de Archivos
 
-## Clase 2: 26/11 
+## Clase 2: 26-11 
 ### Tidyverse
 * Limpieza de Base de datos: Renombrar y recodificar variables, tratamiento de valores faltantes (missing values/ NA´s)
 * Seleccionar variables, ordenar y agrupar la base de datos para realizar cálculos
@@ -22,7 +22,7 @@ Curso interno armado a partir de [Notas de clase del curso de introducción a Da
 * Construir medidas de resumen de la información
 * Tratamiento de variables numéricas (rendimiento, area sembrada, area cosechada, precipitaciones).
 
-## Clase 3: 02/12
+## Clase 3: 02-12
 ### Visualización de la información
 * Gráficos básicos de R (función “plot”): Comandos para la visualización ágil de la información
 * Gráficos elaborados en R (función “ggplot”):
@@ -31,7 +31,7 @@ Curso interno armado a partir de [Notas de clase del curso de introducción a Da
 * Gráficos con múltiples cruces de variables.
 * Mapas en R
 
-## Clase 4: 10/12 
+## Clase 4: 10-12 
 ### Documentación en R
 * Manejo de las extensiones del software “Rmarkdown” y “RNotebook” para elaborar documentos de trabajo, presentaciones interactivas e informes:
 * Opciones para mostrar u ocultar código en los reportes
