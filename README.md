@@ -1,9 +1,7 @@
 # Curso-R-BdeC
 
-Curso interno armado a partir de [Notas de clase del curso de introducción a Data Science. Práctica Guiada. Diego Kozlowski y Natsumi Shokida ](https://diegokoz.github.io/intro_ds_bookdown/index.html)
-
 # Prerrequisitos
-* Instalar R y RStudio. [Ver instrucciones seccion 1.4](https://es.r4ds.hadley.nz/introducci%C3%B3n.html)
+* Instalar R y RStudio. [Ver instrucciones secciones 1.4.1 y 1.4.2](https://es.r4ds.hadley.nz/introducci%C3%B3n.html)
 
 # Programa
 
