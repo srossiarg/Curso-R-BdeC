@@ -279,19 +279,19 @@ Este objeto suele ser central en el proceso de trabajo, y suele ser la forma en 
 También se puede crear como la combinación de N vectores de igual tamaño. Por ejemplo, tomamos algunos valores del [Indice de salarios](http://www.indec.gob.ar/bajarCuadroEstadistico.asp?idc=4020B33440609462654542BD0BC320F1523DA0DC52C396201DB4DD5861FFEDC9AD1436681AC84179)
 
 ```{r}
-INDICE  <- c(100,   100,   100,
-             101.8, 101.2, 100.73,
-             102.9, 102.4, 103.2)
+RINDE  <- c(3,   3.3,   8,
+             3.1, 2.7, 7.7,
+             2.8, 3, 7.3)
 
-FECHA  <-  c("Oct-16", "Oct-16", "Oct-16",
-             "Nov-16", "Nov-16", "Nov-16",
-             "Dic-16", "Dic-16", "Dic-16")
+CAMPANA  <-  c("2015/16","2015/16","2015/16",
+             "2016/17","2016/17","2016/17",
+             "2017/18","2017/18","2017/18")
 
-GRUPO  <-  c("Privado_Registrado","Público","Privado_No_Registrado",
-             "Privado_Registrado","Público","Privado_No_Registrado",
-             "Privado_Registrado","Público","Privado_No_Registrado")
+CULTIVO  <-  c("Trigo","Soja","Maiz",
+             "Trigo","Soja","Maiz",
+             "Trigo","Soja","Maiz")
 
-Datos <- data.frame(INDICE, FECHA, GRUPO)
+Datos <- data.frame(RINDE, CAMPANA, CULTIVO)
 Datos
 ```
 
@@ -300,59 +300,59 @@ Tal como en un __vector__ se ubica a los elementos mediante ```[ ]```, en un __d
 Otra opción es especificar la columna, mediante el operador __```$```__, y luego seleccionar dentro de esa columna el registro deseado mediante el número de orden.
 
 ```{r}
-Datos$FECHA
+Datos$CAMPANA
 Datos[3,2]
-Datos$FECHA[3]
+Datos$CAMPANA[3]
 ```
 
-¿que pasa si hacemos ```Datos$FECHA[3,2]``` ?
+¿que pasa si hacemos ```Datos$CAMPANA[3,2]``` ?
 
 ```{r error=TRUE}
-Datos$FECHA[3,2]
+Datos$CAMPANA[3,2]
 ```
 
-Nótese que el último comando tiene un número incorrecto de dimensiones, porque estamos refiriendonos 2 veces a la columna FECHA.    
+Nótese que el último comando tiene un número incorrecto de dimensiones, porque estamos refiriendonos 2 veces a la columna CAMPANA.    
 
 Acorde a lo visto anteriormente, el acceso a los __dataframes__ mediante  ```[ ]``` puede utilizarse para realizar filtros sobre la base, especificando una condición para las filas. Por ejemplo, puedo utilizar los  ```[ ]``` para conservar del __dataframe__ ```Datos ```  unicamente los registros con fecha de Diciembre 2016:
 
 ```{r error=TRUE}
-Datos[Datos$FECHA=="Dic-16",]
+Datos[Datos$CAMPANA=="2015/16",]
 ```
 
-La lógica del paso anterior sería: Accedo al dataframe ```Datos```, pidiendo únicamente conservar las filas (por eso la condición se ubica a la _izquierda_ de la  ```, ```) que cumplan el requisito de pertenecer a la categoría __"Dic-16"__ de la variable __FECHA__.    
+La lógica del paso anterior sería: Accedo al dataframe ```Datos```, pidiendo únicamente conservar las filas (por eso la condición se ubica a la _izquierda_ de la  ```, ```) que cumplan el requisito de pertenecer a la categoría __"2015/16"__ de la variable __CAMPANA__.    
 
-Aún más, podría aplicar el filtro y al mismo tiempo identificar una variable de interés para luego realizar un cálculo sobre aquella. Por ejemplo, podría calcular la media de los indices en el mes de Diciembre. 
+Aún más, podría aplicar el filtro y al mismo tiempo identificar una variable de interés para luego realizar un cálculo sobre aquella. Por ejemplo, podría calcular la media de los rindes en CAMPANA 2015/16. 
 
 ```{r error=TRUE}
 ###Por separado
-Indices_Dic <- Datos$INDICE[Datos$FECHA=="Dic-16"]
-Indices_Dic
+rindes_15_16 <- Datos$RINDE[Datos$CAMPANA=="2015/16"]
+rindes_15_16
 ```
 
 ```{r error=TRUE}
-mean(Indices_Dic)
+mean(rindes_15_16)
 ```
 
 ```{r error=TRUE}
 ### Todo junto
-mean(Datos$INDICE[Datos$FECHA=="Dic-16"])
+mean(Datos$RINDE[Datos$CAMPANA=="2015/16"])
 ```
 
-La lógica de esta sintaxis sería: "Me quedo con la variable __INDICE__, cuando la variable FECHA sea igual a __"Dic-16"__, luego calculo la media de dichos valores".
+La lógica de esta sintaxis sería: "Me quedo con la variable __RINDE__, cuando la variable CAMPANA sea igual a __"2015/16"__, luego calculo la media de dichos valores".
 
 ### Listas
 
 Contienen una concatenación de objetos de cualquier tipo. Así como un vector contiene valores, un dataframe contiene vectores, una lista puede contener dataframes, pero también vectores, o valores, y _todo ello a la vez_.
 
 ```{r}
-superlista <- list(A,B,C,D,E,FECHA, DF = Datos, INDICE, GRUPO)
+superlista <- list(A,B,C,D,E,CAMPANA, DF = Datos, RINDE, CULTIVO)
 superlista
 ```
 
 Para acceder un elemento de una lista, podemos utilizar el operador __```$```__, que se puede usar a su vez de forma iterativa. 
 
 ```{r}
-superlista$DF$FECHA[2]
+superlista$DF$CAMPANA[2]
 ```
 
 ### Ambientes de trabajo
