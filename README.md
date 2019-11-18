@@ -21,7 +21,13 @@ Ahora [descarguen RStudio](https://rstudio.com/products/rstudio/download/), tamb
 * Tipos de variable (numérica, de caracteres, lógicas)
 * Lectura y Escritura de Archivos
 
-## Clase 2: 26-11 
+### Materiales
+- [Explicación](clase_1/01_explicacion.nb.html)
+- [Práctica Guiada](clase_1/01_practica_guiada.nb.html)
+- [Pŕactica independiente](clase_1/01_practica_independiente.nb.html)
+
+
+## Clase 2: 26-11
 ### Tidyverse
 * Limpieza de Base de datos: Renombrar y recodificar variables, tratamiento de valores faltantes (missing values/ NA´s)
 * Seleccionar variables, ordenar y agrupar la base de datos para realizar cálculos
@@ -39,7 +45,7 @@ Ahora [descarguen RStudio](https://rstudio.com/products/rstudio/download/), tamb
 * Gráficos con múltiples cruces de variables.
 * Mapas en R
 
-## Clase 4: 9-12 
+## Clase 4: 9-12
 ### Documentación en R
 * Manejo de las extensiones del software “Rmarkdown” y “RNotebook” para elaborar documentos de trabajo, presentaciones interactivas e informes:
 * Opciones para mostrar u ocultar código en los reportes
