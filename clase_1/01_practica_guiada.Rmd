@@ -38,27 +38,31 @@ Es importante tener en cuenta que una base de datos que proviene de archivos _.t
 dataframe <- read.delim(file, header = TRUE, sep = "\t", quote = "\"", dec = ".", fill = TRUE, comment.char = "", ...) 
 ```
 
-Ejemplo. Levantar la base de [sueldos de funcionarios](https://data.buenosaires.gob.ar/dataset/sueldo-funcionarios)
+Ejemplo. Levantar la base de [Estimaciones Agricolas](http://datosestimaciones.magyp.gob.ar/reportes.php?reporte=Estimaciones)
 
 En el parametro `file` tengo que especificar el nombre completo del archivo, incluyendo el directorio donde se encuentra. Lo más sencillo es abrir comillas, apretar `Tab` y se despliega el menú de las cosas que tenemos en el directorio de trabajo. Si queremos movernos hacia arriba, agregamos `../`
 
 
+
+
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
-sueldos_funcionarios <- read.table(file = '../fuentes/sueldo_funcionarios_2019.csv',sep=",", header = TRUE)
-sueldos_funcionarios[1:10,]
+estimaciones <- read.table(file = '../datasets/Estimaciones.csv',sep=";", header = TRUE)
+estimaciones[1:10,]
+dim(estimaciones)
 ```
-Como puede observarse aquí, la base cuenta con 94 registros y 10 variables.  
+
+
+Como puede observarse aquí, la base cuenta con  12 variables y 95873 registros.  
 Al trabajar con bases de microdatos, resulta conveniente contar con algunos comandos para tener una mirada rápida de la base, antes de comenzar a realizar los procesamientos que deseemos.     
 
 Veamos algunos de ellos:
 
-```{r}
-#view(sueldos_funcionarios)
-names(sueldos_funcionarios)
-summary(sueldos_funcionarios)
-head(sueldos_funcionarios)[,1:5]
-```
 
+```{r}
+names(estimaciones)
+summary(estimaciones)
+head(estimaciones)[,1:5]
+```
 
 #### Excel 
 
@@ -82,17 +86,17 @@ write.xlsx(x = tabla_de_R, file = "../resultados/archivo.xlsx", row.names = FALS
 # getwd()
 
 # Si queremos exportar multiples dataframes a un Excel, debemos armar previamente una lista de ellos. Cada dataframe se guardará en una pestaña de excel, cuyo nombre corresponderá al que definamos para cada Dataframe a la hora de crear la lista.
-Lista_a_exportar <- list("sueldos funcionarios" = sueldos_funcionarios,
+Lista_a_exportar <- list("estimaciones agricolas" = estimaciones,
                          "Tabla Numeros" = tabla_de_R)
 
 write.xlsx(x = Lista_a_exportar, file = "../resultados/archivo_2_hojas.xlsx", row.names = FALSE)
 
 # leemos el archivo especificando la ruta (o el directorio por default) y el nombre de la hoja que contiene los datos
-Indices_Salario <- read.xlsx(xlsxFile = "../resultados/archivo_2_hojas.xlsx", sheet = "sueldos funcionarios")
+estimaciones <- read.xlsx(xlsxFile = "../resultados/archivo_2_hojas.xlsx", sheet = "estimaciones agricolas")
 
 # alternativamente podemos especificar el número de orden de la hoja que deseamos levantar
-Indices_Salario <- read.xlsx(xlsxFile = "../resultados/archivo_2_hojas.xlsx", sheet = 1)
-Indices_Salario[1:10,]
+estimaciones <- read.xlsx(xlsxFile = "../resultados/archivo_2_hojas.xlsx", sheet = 1)
+estimaciones[1:10,]
 ```
 
 

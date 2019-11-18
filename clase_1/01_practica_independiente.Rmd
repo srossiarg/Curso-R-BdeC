@@ -45,7 +45,7 @@ _VEC6_).
 
 ### Dataset [cruceros](https://data.buenosaires.gob.ar/dataset/cruceros)
 
-El archivo `TUR_CRU_AX04.xls` contiene información de las recaladas de cruceros en Buenos Aires. Se encuentra en la carpeta `fuentes`.
+El archivo `soja.xlsx` contiene información de las producción de soja en Argentina. Se encuentra en la carpeta `datasets`.
 
 El objetivo es leer el archivo:
 
