@@ -22,9 +22,9 @@ Ahora [descarguen RStudio](https://rstudio.com/products/rstudio/download/), tamb
 * Lectura y Escritura de Archivos
 
 ### Materiales
-- [Explicación](clase_1/01_explicacion.nb)
-- [Práctica Guiada](clase_1/01_practica_guiada.nb)
-- [Pŕactica independiente](clase_1/01_practica_independiente.nb)
+- [Explicación](clase_1/01_explicacion.nb.html)
+- [Práctica Guiada](clase_1/01_practica_guiada.nb.html)
+- [Pŕactica independiente](clase_1/01_practica_independiente.nb.html)
 
 
 ## Clase 2: 26-11
