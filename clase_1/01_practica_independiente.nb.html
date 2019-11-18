@@ -307,8 +307,9 @@ div.tocify {
 </ul>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxub2JqZXRvIDwtIDUrNlxuYGBgXG5gYGAifQ== -->
-<p><code>r</code>r objeto &lt;- 5+6</p>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuYGBgclxub2JqZXRvIDwtIDUrNlxuYGBgXG5gYGBcbmBgYCJ9 -->
+<p><code>r</code>r</p>
+<pre class="r"><code>objeto &lt;- 5+6</code></pre>
 <pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
@@ -342,8 +343,8 @@ div.tocify {
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
-<div id="dataset-cruceros" class="section level3">
-<h3>Dataset <a href="https://data.buenosaires.gob.ar/dataset/cruceros">cruceros</a></h3>
+<div id="dataset-soja" class="section level3">
+<h3>Dataset Soja</h3>
 <p>El archivo <code>soja.xlsx</code> contiene información de las producción de soja en Argentina. Se encuentra en la carpeta <code>datasets</code>.</p>
 <p>El objetivo es leer el archivo:</p>
 <ol style="list-style-type: decimal">
@@ -361,14 +362,20 @@ div.tocify {
 <div id="operaciones-sobre-objetos" class="section level3">
 <h3>Operaciones sobre objetos</h3>
 <ul>
-<li>Hacer un <code>summary</code> sobre la cantidad de recaladas para saber el mínimo, el primer cuartil, la mediana, la media, tercer cuartil y el máximo valor.</li>
+<li>Hacer un <code>summary</code> sobre la columna rendimiento para saber el mínimo, el primer cuartil, la mediana, la media, tercer cuartil y el máximo valor.</li>
 </ul>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+<p>Generar un nuevo <code>data.frame</code> con los datos del Departamento “MARCOS JUAREZ”</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Nota: si quedaron filas con faltantes <code>NA</code>, elminarlas. Puede usar <code>!is.na</code></p>
 <ul>
-<li>Crear un vector booleano que indique si aumentó la recalada respecto al año anterior:</li>
+<li>Crear un vector booleano que indique si aumentó el rinde respecto a la campaña anterior:</li>
 </ul>
 <p>Pista: Podemos utilizar <code>&lt;</code> o <code>&gt;</code> junto con <code>[]</code></p>
 <!-- rnb-text-end -->
@@ -376,14 +383,14 @@ div.tocify {
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <ul>
-<li>Agregar el vector como una nueva columna al dataframe, que se llame “aumento_recalada”</li>
+<li>Agregar el vector como una nueva columna al dataframe, que se llame “aumento_rinde”</li>
 </ul>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <ul>
-<li>Con la nueva variable, filtrar los datos para que nos quede un nuevo dataset sólo de los años con aumento de la recalada</li>
+<li>Con la nueva variable, filtrar los datos para que nos quede un nuevo dataset sólo de las campañas con aumento del rinde</li>
 </ul>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
@@ -397,13 +404,13 @@ div.tocify {
 <li>Crear un proyecto para la clase 1.</li>
 <li>Guardar en un Rdata los elementos del enviroment (googlear cómo se guarda).</li>
 <li>Reinciar R y abrir el Rdata.</li>
-<li>Guardar el dataset de cruceros en un .RDS.</li>
+<li>Guardar el dataset de soja en un .RDS.</li>
 <li>Levantar el .RDS con otro nombre.</li>
 </ol>
 <!-- rnb-text-end -->
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogSW50cm9kdWNjacOzbiBhIFINCm91dHB1dDoNCiAgaHRtbF9ub3RlYm9vazoNCiAgICB0b2M6IHllcw0KICAgIHRvY19mbG9hdDogeWVzDQpkYXRlOiAiIg0Kc3VidGl0bGU6IFByw6FjdGljYSBpbmRlcGVuZGllbnRlDQotLS0NCg0KPiBSZWluaWNpYXIgUiAoYFNlc3Npb24gLS0+IFJlc3RhcnQgUmApDQoNCiMjIyBPYmpldG9zIHkgdmVjdG9yZXMNCg0KLSBDcmVhciB1biBPQkpFVE8gbGxhbWFkbyBfb2JqZXRvXyBkZWZpbmlkbyBjb21vIGVsIHJlc3VsdGFkbyBkZSBsYSBzdW1hOiA1ICsgNg0KDQpgYGB7cn0NCm9iamV0byA8LSA1KzYNCmBgYA0KDQotIENyZWFyIHVuIFZFQ1RPUiBfVkVDMF8gcXVlIGNvbnRlbmdhIGxvcyBuw7ptZXJvcyAxLCAzLCA0Lg0KDQpgYGB7cn0NCg0KYGBgDQoNCi0gQ3JlYXIgMyB2ZWN0b3JlcyAoIF9WRUMxXywgX1ZFQzJfLCBfVkVDM18pIHF1ZSBzZWFuIHRyYW5zZm9ybWFjaW9uZXMgZGVsIGFudGVyaW9yDQoNCmBgYHtyfQ0KDQpgYGANCg0KLSBDcmVhciAzIHZlY3RvcmVzIGNvbiBsYSBtaXNtYSBjYW50aWRhZCBkZSBlbGVtZW50b3MgcXVlIFZFQzAsIHBlcm8gY29uIHZhcmlhYmxlcyBzdHJpbmcgKHRleHRvKSAoIF9WRUM0XywgX1ZFQzVfLCANCl9WRUM2XykuDQoNCmBgYHtyfQ0KDQpgYGANCg0KLSBDcmVhciB1biBkYXRhZnJhbWUgX0RGUkFNRV8gY29tbyBjb21iaW5hY2nDs24gZGUgdG9kb3MgbG9zIF9fdmVjdG9yZXNfXyBjcmVhZG9zIHByZXZpYW1lbnRlDQoNCmBgYHtyfQ0KDQpgYGANCg0KIyMjIERhdGFzZXQgW2NydWNlcm9zXShodHRwczovL2RhdGEuYnVlbm9zYWlyZXMuZ29iLmFyL2RhdGFzZXQvY3J1Y2Vyb3MpDQoNCkVsIGFyY2hpdm8gYHNvamEueGxzeGAgY29udGllbmUgaW5mb3JtYWNpw7NuIGRlIGxhcyBwcm9kdWNjacOzbiBkZSBzb2phIGVuIEFyZ2VudGluYS4gU2UgZW5jdWVudHJhIGVuIGxhIGNhcnBldGEgYGRhdGFzZXRzYC4NCg0KRWwgb2JqZXRpdm8gZXMgbGVlciBlbCBhcmNoaXZvOg0KDQoxLiBzaW4gbW92ZXIgc3UgdWJpY2FjacOzbg0KMi4gc2luIGNhbWJpYXIgc3UgZm9ybWF0byAocHVlZGVuIHVzYXIgbGEgbGlicmVyw61hIGB4bHN4YCkNCjMuIEluZGljYW5kbyBxdWUgcXVlcmVtb3MgbGVlciBsYSBwcmltZXIgaG9qYQ0KNC4gc2luIG1vZGlmaWNhciBlbCBhcmNoaXZvICjCv2hheSBhbGfDum4gcGFyw6FtZXRybyBkZSBsYSBmdW5jacOzbiBxdWUgbm9zIHBlcm1pdGEgZXNxdWl2YXIgbGFzIHByaW1lcmFzIGZpbGFzPykNCjUuIE5vdGVuIHF1ZSBhbCBmaW5hbCBkZWwgYXJjaGl2byBoYXkgbm90YXMgYWNsYXJhdG9yaWFzLiDCv2hheSBhbGfDum4gcGFyw6FtZXRybyBkZSBsYSBmdW5jacOzbiBxdWUgbm9zIHBlcm1pdGEgZXNwZWNpZmljYXIgaGFzdGEgcXXDqSBmaWxhIGxlZXIgZWwgYXJjaGl2bz8NCg0KYGBge3J9DQoNCmBgYA0KDQojIyMgT3BlcmFjaW9uZXMgc29icmUgb2JqZXRvcw0KDQotIEhhY2VyIHVuIGBzdW1tYXJ5YCBzb2JyZSBsYSBjYW50aWRhZCBkZSByZWNhbGFkYXMgcGFyYSBzYWJlciBlbCBtw61uaW1vLCBlbCBwcmltZXIgY3VhcnRpbCwgbGEgbWVkaWFuYSwgbGEgbWVkaWEsIHRlcmNlciBjdWFydGlsIHkgZWwgbcOheGltbyB2YWxvci4NCg0KYGBge3J9DQoNCmBgYA0KDQotIENyZWFyIHVuIHZlY3RvciBib29sZWFubyBxdWUgaW5kaXF1ZSBzaSBhdW1lbnTDsyBsYSByZWNhbGFkYSByZXNwZWN0byBhbCBhw7FvIGFudGVyaW9yOg0KDQpQaXN0YTogUG9kZW1vcyB1dGlsaXphciBgPGAgbyBgPmAganVudG8gY29uIGBbXWANCg0KYGBge3J9DQoNCmBgYA0KDQotIEFncmVnYXIgZWwgdmVjdG9yIGNvbW8gdW5hIG51ZXZhIGNvbHVtbmEgYWwgZGF0YWZyYW1lLCBxdWUgc2UgbGxhbWUgImF1bWVudG9fcmVjYWxhZGEiDQoNCmBgYHtyfQ0KDQpgYGANCg0KLSBDb24gbGEgbnVldmEgdmFyaWFibGUsIGZpbHRyYXIgbG9zIGRhdG9zIHBhcmEgcXVlIG5vcyBxdWVkZSB1biBudWV2byBkYXRhc2V0IHPDs2xvIGRlIGxvcyBhw7FvcyBjb24gYXVtZW50byBkZSBsYSByZWNhbGFkYQ0KDQpgYGB7cn0NCg0KYGBgDQoNCiMjIyBBcmNoaXZvcyB5IGFtYmllbnRlcyBkZSB0cmFiYWpvDQoNCjEuIENyZWFyIHVuIHNjcmlwdCBgLlJgIGNvbiBlbCBjw7NkaWdvIGRlIGxhIHByw6FjdGljYSBpbmRlcGVuZGllbnRlLg0KMi4gQ3JlYXIgdW4gcHJveWVjdG8gcGFyYSBsYSBjbGFzZSAxLg0KMy4gR3VhcmRhciBlbiB1biBSZGF0YSBsb3MgZWxlbWVudG9zIGRlbCBlbnZpcm9tZW50IChnb29nbGVhciBjw7NtbyBzZSBndWFyZGEpLg0KNC4gUmVpbmNpYXIgUiB5IGFicmlyIGVsIFJkYXRhLg0KNS4gR3VhcmRhciBlbCBkYXRhc2V0IGRlIGNydWNlcm9zIGVuIHVuIC5SRFMuDQo2LiBMZXZhbnRhciBlbCAuUkRTIGNvbiBvdHJvIG5vbWJyZS4NCg0K</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogSW50cm9kdWNjacOzbiBhIFINCm91dHB1dDoNCiAgaHRtbF9ub3RlYm9vazoNCiAgICB0b2M6IHllcw0KICAgIHRvY19mbG9hdDogeWVzDQpkYXRlOiAiIg0Kc3VidGl0bGU6IFByw6FjdGljYSBpbmRlcGVuZGllbnRlDQotLS0NCg0KPiBSZWluaWNpYXIgUiAoYFNlc3Npb24gLS0+IFJlc3RhcnQgUmApDQoNCiMjIyBPYmpldG9zIHkgdmVjdG9yZXMNCg0KLSBDcmVhciB1biBPQkpFVE8gbGxhbWFkbyBfb2JqZXRvXyBkZWZpbmlkbyBjb21vIGVsIHJlc3VsdGFkbyBkZSBsYSBzdW1hOiA1ICsgNg0KDQpgYGB7cn0NCm9iamV0byA8LSA1KzYNCmBgYA0KDQotIENyZWFyIHVuIFZFQ1RPUiBfVkVDMF8gcXVlIGNvbnRlbmdhIGxvcyBuw7ptZXJvcyAxLCAzLCA0Lg0KDQpgYGB7cn0NCg0KYGBgDQoNCi0gQ3JlYXIgMyB2ZWN0b3JlcyAoIF9WRUMxXywgX1ZFQzJfLCBfVkVDM18pIHF1ZSBzZWFuIHRyYW5zZm9ybWFjaW9uZXMgZGVsIGFudGVyaW9yDQoNCmBgYHtyfQ0KDQpgYGANCg0KLSBDcmVhciAzIHZlY3RvcmVzIGNvbiBsYSBtaXNtYSBjYW50aWRhZCBkZSBlbGVtZW50b3MgcXVlIFZFQzAsIHBlcm8gY29uIHZhcmlhYmxlcyBzdHJpbmcgKHRleHRvKSAoIF9WRUM0XywgX1ZFQzVfLCANCl9WRUM2XykuDQoNCmBgYHtyfQ0KDQpgYGANCg0KLSBDcmVhciB1biBkYXRhZnJhbWUgX0RGUkFNRV8gY29tbyBjb21iaW5hY2nDs24gZGUgdG9kb3MgbG9zIF9fdmVjdG9yZXNfXyBjcmVhZG9zIHByZXZpYW1lbnRlDQoNCmBgYHtyfQ0KDQpgYGANCg0KIyMjIERhdGFzZXQgU29qYQ0KDQpFbCBhcmNoaXZvIGBzb2phLnhsc3hgIGNvbnRpZW5lIGluZm9ybWFjacOzbiBkZSBsYXMgcHJvZHVjY2nDs24gZGUgc29qYSBlbiBBcmdlbnRpbmEuIFNlIGVuY3VlbnRyYSBlbiBsYSBjYXJwZXRhIGBkYXRhc2V0c2AuDQoNCkVsIG9iamV0aXZvIGVzIGxlZXIgZWwgYXJjaGl2bzoNCg0KMS4gc2luIG1vdmVyIHN1IHViaWNhY2nDs24NCjIuIHNpbiBjYW1iaWFyIHN1IGZvcm1hdG8gKHB1ZWRlbiB1c2FyIGxhIGxpYnJlcsOtYSBgeGxzeGApDQozLiBJbmRpY2FuZG8gcXVlIHF1ZXJlbW9zIGxlZXIgbGEgcHJpbWVyIGhvamENCjQuIHNpbiBtb2RpZmljYXIgZWwgYXJjaGl2byAowr9oYXkgYWxnw7puIHBhcsOhbWV0cm8gZGUgbGEgZnVuY2nDs24gcXVlIG5vcyBwZXJtaXRhIGVzcXVpdmFyIGxhcyBwcmltZXJhcyBmaWxhcz8pDQo1LiBOb3RlbiBxdWUgYWwgZmluYWwgZGVsIGFyY2hpdm8gaGF5IG5vdGFzIGFjbGFyYXRvcmlhcy4gwr9oYXkgYWxnw7puIHBhcsOhbWV0cm8gZGUgbGEgZnVuY2nDs24gcXVlIG5vcyBwZXJtaXRhIGVzcGVjaWZpY2FyIGhhc3RhIHF1w6kgZmlsYSBsZWVyIGVsIGFyY2hpdm8/DQoNCmBgYHtyfQ0KDQpgYGANCg0KIyMjIE9wZXJhY2lvbmVzIHNvYnJlIG9iamV0b3MNCg0KLSBIYWNlciB1biBgc3VtbWFyeWAgc29icmUgbGEgY29sdW1uYSByZW5kaW1pZW50byBwYXJhIHNhYmVyIGVsIG3DrW5pbW8sIGVsIHByaW1lciBjdWFydGlsLCBsYSBtZWRpYW5hLCBsYSBtZWRpYSwgdGVyY2VyIGN1YXJ0aWwgeSBlbCBtw6F4aW1vIHZhbG9yLg0KDQpgYGB7cn0NCg0KYGBgDQoNCkdlbmVyYXIgdW4gbnVldm8gYGRhdGEuZnJhbWVgIGNvbiBsb3MgZGF0b3MgZGVsIERlcGFydGFtZW50byAiTUFSQ09TIEpVQVJFWiINCg0KYGBge3J9DQoNCmBgYA0KDQpOb3RhOiBzaSBxdWVkYXJvbiBmaWxhcyBjb24gZmFsdGFudGVzIGBOQWAsIGVsbWluYXJsYXMuIFB1ZWRlIHVzYXIgYCFpcy5uYWANCg0KDQoNCi0gQ3JlYXIgdW4gdmVjdG9yIGJvb2xlYW5vIHF1ZSBpbmRpcXVlIHNpIGF1bWVudMOzIGVsIHJpbmRlIHJlc3BlY3RvIGEgbGEgY2FtcGHDsWEgYW50ZXJpb3I6DQoNCg0KUGlzdGE6IFBvZGVtb3MgdXRpbGl6YXIgYDxgIG8gYD5gIGp1bnRvIGNvbiBgW11gDQoNCmBgYHtyfQ0KDQpgYGANCg0KLSBBZ3JlZ2FyIGVsIHZlY3RvciBjb21vIHVuYSBudWV2YSBjb2x1bW5hIGFsIGRhdGFmcmFtZSwgcXVlIHNlIGxsYW1lICJhdW1lbnRvX3JpbmRlIg0KDQpgYGB7cn0NCg0KYGBgDQoNCi0gQ29uIGxhIG51ZXZhIHZhcmlhYmxlLCBmaWx0cmFyIGxvcyBkYXRvcyBwYXJhIHF1ZSBub3MgcXVlZGUgdW4gbnVldm8gZGF0YXNldCBzw7NsbyBkZSBsYXMgY2FtcGHDsWFzIGNvbiBhdW1lbnRvIGRlbCByaW5kZQ0KDQpgYGB7cn0NCg0KYGBgDQoNCiMjIyBBcmNoaXZvcyB5IGFtYmllbnRlcyBkZSB0cmFiYWpvDQoNCjEuIENyZWFyIHVuIHNjcmlwdCBgLlJgIGNvbiBlbCBjw7NkaWdvIGRlIGxhIHByw6FjdGljYSBpbmRlcGVuZGllbnRlLg0KMi4gQ3JlYXIgdW4gcHJveWVjdG8gcGFyYSBsYSBjbGFzZSAxLg0KMy4gR3VhcmRhciBlbiB1biBSZGF0YSBsb3MgZWxlbWVudG9zIGRlbCBlbnZpcm9tZW50IChnb29nbGVhciBjw7NtbyBzZSBndWFyZGEpLg0KNC4gUmVpbmNpYXIgUiB5IGFicmlyIGVsIFJkYXRhLg0KNS4gR3VhcmRhciBlbCBkYXRhc2V0IGRlIHNvamEgZW4gdW4gLlJEUy4NCjYuIExldmFudGFyIGVsIC5SRFMgY29uIG90cm8gbm9tYnJlLg0KDQo=</div>
 
 
 </div>
