@@ -36,6 +36,12 @@ Ahora [descarguen RStudio](https://rstudio.com/products/rstudio/download/), tamb
 * Construir medidas de resumen de la información
 * Tratamiento de variables numéricas (rendimiento, area sembrada, area cosechada, precipitaciones).
 
+### Materiales
+- [Explicación](clase_2/02_explicacion.nb.html)
+- [Práctica Guiada](clase_2/02_practica_guiada.nb.html)
+- [Pŕactica independiente](clase_2/02_practica_independiente.nb.html) 
+
+
 ## Clase 3: 02-12
 ### Visualización de la información
 * Gráficos básicos de R (función “plot”): Comandos para la visualización ágil de la información
