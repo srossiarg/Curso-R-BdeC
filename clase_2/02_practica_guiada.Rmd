@@ -1,113 +1,151 @@
 ---
-title: Tidyverse
+title: "Tidyverse"
 output:
+  html_document:
+    df_print: paged
+    toc: yes
   html_notebook:
     toc: yes
     toc_float: yes
-date: ""
-subtitle: Práctica Guiada
+date: ''
+subtitle: PrÃ¡ctica Guiada
 ---
 
-En esta ocasión utilizaremos los datos de la librería `gapminder` para utilizar todo lo que aprendimos sobre el `tidyverse`.
+En esta ocasión utilizaremos los datos de las estimaciones del ministerio de agroindustria para utilizar todo lo que aprendimos sobre el `tidyverse`.
 
 ```{r message=FALSE, warning=FALSE}
 library(tidyverse)
-library(gapminder)
+estimaciones <- read.table(file = '../datasets/Estimaciones.csv',sep=";", header = TRUE)
 ```
 
+Hechamos un rápido vistazo a la base
+
 ```{r}
-glimpse(gapminder)
+head(estimaciones)
+str(estimaciones)
+summary(estimaciones)
 ```
 
-### Ejemplo 1
+### Ejercicio 1: Creación del dataset
 
-> Calcular el promedio, el máximo y el mínimo de la esperanza de vida de cada continente en el año 2007. Presentar los datos ordenados según la esperanza de vida promedio.
+> La columna *cultivo* es de tipo factor con 28 niveles. Queremos armar nuestro dataset con solamente 3 cultivos:Soja, Trigo y Maíz
 
-Necesitamos filtrar los datos tal que sólo queden aquellos correspondientes a 2007. Luego, agrupamos los casos de acuerdo a su _continente_, y calculamos los indicadores agregados solicitados. Luego, ordenamos los resultados.
+Necesitamos filtrar los datos y renombrar la nueva base con la que vamos a trabajar. Tengan en cuenta que el filtro tiene que estar escrito de la misma manera que se encuentra el registro. 
 
 ```{r}
-ejercicio1 <- gapminder %>% 
-  filter(year == 2007) %>% 
-  group_by(continent) %>% 
-  summarise(esp_vida_prom = mean(lifeExp),
-            esp_vida_max =  max(lifeExp),
-            esp_vida_min =  min(lifeExp)) %>% 
-  arrange(esp_vida_prom)
+Base <- estimaciones %>% 
+  filter(Cultivo == "Soja total" | Cultivo == "Trigo total" | Cultivo == "Maíz")
 
-ejercicio1
+head(Base)
 ```
 
-### Ejemplo 2
+### Ejercicio 2: Modificación de variables
 
-> Construir una nueva variable en el dataset que contenga una estimación del PBI. Estimar la mediana del PBI, y construir otra variable que tome valor "ALTO" cuando el PBI supera ese valor, y "BAJO" cuando no.
+> El Rendimiento se encuentra en kg/ha, para una mayor facilidad de lectura queremos modificar la columna a *(qq/ha)*. Luego le cambiaremos el nombre a todas las columnas de medidas para incluir las unidades entre paréntesis.
 
-Calculamos el PBI como el producto entre la población y el PBI per cápita para cada uno de los países y años. A continuación, guardamos el cálculo de la mediana del PBI en un valor llamado _mediana_GDP_. Por último, utilizamos la función `case_when` para poder construir la variable de nivel de PBI de acuerdo a la condición lógica solicitada. Nótese que el dataframe `ejercicio2` ha sido re-escrito.
 
 ```{r}
-ejercicio2 <- gapminder %>% 
-  mutate(GDP = pop * gdpPercap)
+Base$Rendimiento..Kg.Ha. = Base$Rendimiento..Kg.Ha./100
 
-mediana_GDP <- median(ejercicio2$GDP)
+Base <- Base %>% 
+  rename("Rinde(qq/ha)" = Rendimiento..Kg.Ha.,
+         "Sembrada(ha)" = Sup..Sembrada..Ha.,
+         "Cosechada(ha)" = Sup..Cosechada..Ha.,
+         "Produccion(tn)" = Producción..Tn.)
 
-ejercicio2 <- ejercicio2 %>% 
-  mutate(GDP_level = case_when(GDP > mediana_GDP ~ "ALTO",
-                               GDP < mediana_GDP ~ "BAJO"))
-
-head(ejercicio2)
+head(Base)
 ```
 
-### Ejemplo 3
+### Ejercicio 3: Seleccion de variables y reordenamiento
 
-> Crear una copia de la base donde sólo se conserven las variables _country_, _year_ y _lifeExp_, pero con los nombres _pais_, _anio_ y _espVida_.
+> Reescribir la base con las siguientes columnas y respetando el orden:
+Provincia, Departamento, Cultivo, Campana, Sembrada(ha), Cosechada(ha), Rinde(qq/ha) y Produccion(tn).
 
-Utilizamos `select()` para quedarnos con las columnas solicitadas, y `rename()` para cambiar sus nombres.
 
 ```{r}
-ejercicio3 <- gapminder %>% 
-  select(country, year, lifeExp) %>% 
-  rename(pais = country,
-         anio = year,
-         espVida = lifeExp)
+Base <-  Base %>% 
+  select(Provincia,Departamento,Cultivo,Campana,
+         `Sembrada(ha)`,`Cosechada(ha)`,`Rinde(qq/ha)`,
+         `Produccion(tn)`)
 
-head(ejercicio3)
+head(Base)
 ```
 
-### Ejemplo 4
+### Ejercicio 4: Nuevas variables
 
-> Crear una copia de la base donde sólo se conserven las variables _country_, _year_ y _gdpPercap_, pero con los nombres _pais_, _anio_ y _pbiPercap_.
+> Calcular el promedio, el máximo y el mínimo del *rinde* de cada cultivo y provincia. Presentar los datos ordenados según el rinde promedio.
+
+
+Necesitamos agrupar los casos de acuerdo a su tipo de cultivo y provincia, y calculamos los indicadores agregados solicitados. Luego, ordenamos los resultados.
+
 
 ```{r}
-ejercicio4 <- gapminder %>% 
-  select(country, year, gdpPercap) %>% 
-  rename(pais = country,
-         anio = year,
-         pbiPercap = gdpPercap)
+ejercicio4 <- Base %>% 
+  group_by(Provincia, Cultivo) %>% 
+  summarise(Rinde_Prom = mean(`Rinde(qq/ha)`),
+            Rinde_Max =  max(`Rinde(qq/ha)`),
+            Rinde_Min =  min(`Rinde(qq/ha)`)) %>% 
+  arrange(Rinde_Prom)
 
-head(ejercicio4)
+
+ejercicio4
 ```
+#### PLUS: Remover NA´s
+No lo vimos en la clase, pero muchas veces en las bases se utilizan 0 u otros valores cuando no deberia haber dato. En ese caso utilizaremos el siguiente código para reemplazarlos por **NA´s**.
+data[data == 0] <- NA
 
-### Ejemplo 5
+*Tip:* Para reemplazar na con 0 realizar el siguiente código: data[is.na(data)] <- 0
 
-> Crear una nueva tabla que contenga los datos de las tablas `ejercicio3` y `ejercicio4`. Deben unirse de acuerdo al _pais_ y al _anio_.
 
-Podemos utilizar la función `left_join()`.
+### Ejercicio 5: Join
+
+> Se desea generar un nuevo dataset que incorpore toda la base de datos y que adicionalmente se incorpore el rinde promedio, mínimo y máximo por cultivo y provincia (previamente calculado en el punto anterior).
+
 
 ```{r}
-ejercicio5 <- left_join(ejercicio3, ejercicio4, by = c("pais", "anio"))
+ejercicio5 <- left_join(Base, ejercicio4, by = c("Provincia", "Cultivo"))
 
 head(ejercicio5)
 ```
 
-### Ejemplo 6
+### Ejercicio 6: Case_when con agrupamiento
 
-> Presentar los datos de la tabla `ejercicio1` de forma tal que _esp_vida_prom_, _esp_vida_max_ y _esp_vida_min_ sean valores de una variable llamada _indicador_, y los valores se encuentren en la variable _valor_.
+> Generar una nueva variable en el dataset ejercicio2 que contenga una variable que tome valor “ALTO” cuando el rinde supera el valor promedio, “BAJO” cuando no e "IGUAL" cuando sean iguales. Luego se desea conocer cuáles provincias tuvieron un rinde superior al promedio para el cultivo de soja en la campaña 2018/19.
 
-Utilizamos `gather()`, porque queremos transformar los datos de un formato "horizontal" a uno "vertical".
 
 ```{r}
-ejercicio6 <- ejercicio1 %>% 
-  gather(., key = indicador, value = valor, 2:4)
+ejercicio6 <- ejercicio5 %>%
+  mutate(Comparativo = case_when(`Rinde(qq/ha)` > Rinde_Prom ~ "ALTO",
+                                 `Rinde(qq/ha)` > Rinde_Prom ~ "BAJO",
+                                 TRUE ~ "IGUAL")) %>%
+    filter(Campana == "2018/19" & Comparativo == "ALTO" & Cultivo=="Soja total") %>%
+    group_by(Provincia) %>%
+  summarise()
 
-head(ejercicio6)
+ejercicio6
 ```
+
+### Ejercicio 7: Horizontal a vertical
+
+> Presentar los datos del ejercicio5 de forma tal que Rinde(qq/ha), Rinde_Max, Rinde_Min y Rinde_Prom sean valores de una variable llamada indicador, y los valores se encuentren en la variable valor. Luego seleccionar las columnas Provincia, Cultivo, Variable y Valor. Finalmente ordenarlas por Provincia.
+
+Utilizamos gather(), porque queremos transformar los datos de un formato “horizontal” a uno “vertical”.
+
+```{r}
+ejercicio7 <- ejercicio5 %>% gather(., 
+                                 key   = Variables,
+                                 value = Valores,
+                                 c(7,9:11)) %>% 
+  select(Provincia,Cultivo,Variables, Valores) %>%
+  arrange(Provincia)
+
+ejercicio7
+```
+
+
+
+
+
+
+
 

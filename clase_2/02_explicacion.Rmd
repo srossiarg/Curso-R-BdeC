@@ -1,10 +1,13 @@
 ---
-title: Tidyverse    
+title: "Tidyverse"
 output:
+  html_document:
+    df_print: paged
+    toc: yes
   html_notebook:
     toc: yes
     toc_float: yes
-date: ""
+date: ''
 subtitle: Explicación
 ---
 
@@ -14,24 +17,29 @@ Entre ellos, usaremos principalmente __dplyr__ y __tidyr__ para realizar transfo
       
 A continuación cargamos la librería a nuestro ambiente. Para ello debe estar previamente instalada en nuestra pc.
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
+#install.packages("tidyverse")
 library(tidyverse)
 ```
 
-Para mostrar el funcionamiento básico de tidyverse utilizaremos a modo de ejemplo datos del [Informe de Mercado de Trabajo del INDEC](https://www.indec.gob.ar/uploads/informesdeprensa/mercado_trabajo_eph_1trim19B489ACCDF9.pdf).    
+Para mostrar el funcionamiento básico de tidyverse utilizaremos a modo de ejemplo datos del [Informe mensual de estimaciones agrícolas del ministerio de agroiundustria.](https://www.agroindustria.gob.ar/sitio/areas/estimaciones/_archivos/estimaciones/190000_2019/191100_Noviembre/191121_Informe%20Mensual%2021%2011%2019.pdf).    
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
-INDICADOR <- c("Tasa de Actividad", "Tasa de Empleo", "Tasa de Desocupación",
-               "Tasa de Actividad", "Tasa de Empleo", "Tasa de Desocupación",
-               "Tasa de Actividad", "Tasa de Empleo", "Tasa de Desocupación")
+CAMPANA <- c("2017/18","2018/19","2019/20",
+            "2017/18","2018/19","2019/20",
+            "2017/18","2018/19","2019/20")
 
-FECHA <-     c("2018.3T", "2018.3T", "2018.3T",
-               "2018.4T", "2018.4T", "2018.4T",
-               "2019.1T", "2019.1T", "2019.1T")
+CULTIVO <-     c("Soja","Soja","Soja",
+                  "Trigo","Trigo","Trigo",
+                    "Maíz","Maíz","Maíz")
 
-TASA <-      c(46.7, 42.5, 9,
-               46.5, 42.2, 9.1, 
-               47,   42.3, 10.1)
+PRODUCCION <-      c(55,37.78,55.3,
+               18.4,18.5,19.46, 
+               49.5,43.46,57)
 
-Datos <- data.frame(INDICADOR, FECHA, TASA)
+AREA <- c(16.8,17,17.2,
+          6,6.3,6.6,
+          7.5,7.2,9)
+
+Datos <- data.frame(CAMPANA,CULTIVO,PRODUCCION,AREA)
 Datos
 ```
 
@@ -45,7 +53,7 @@ $f(x,y)$ es equivalente a $x$ %>% $f(.,y)$
 
 Veamos las principales funciones que pueden utilizarse con la lógica de este paquete:
 
-#### glimpse
+#### str
 
 Permite ver la estructura de la tabla. Nos muestra: 
 
@@ -55,27 +63,53 @@ Permite ver la estructura de la tabla. Nos muestra:
 * tipo de dato de cada columna
 * las primeras observaciones de la tabla
 
-```{r, eval = FALSE}
-glimpse(Datos)
+
+```{r }
+str(Datos)
+
+#equivalente a hacer Datos %>% str()
 ```
 
-![](img/glimpse.png)
+#### Summary
+
+Permite ver la estructura de los datos de cada columna. En este caso se incorporan medidas estadisticas y se muestran cada factor.
+```{r}
+summary(Datos)
+```
 
 
 #### filter
 
 Permite filtrar la tabla de acuerdo al cumplimiento de condiciones lógicas.
+
+¿Cuál es la producción de Soja? 
+
+*Atención!!!* Debe estar escrito igual que como esta en el registro.
  
 ```{r}
 Datos %>% 
-  filter(TASA > 10 , INDICADOR == "Tasa de Desocupación")
-```
+  filter(CULTIVO == "Soja")
 
-Nótese que en este caso al separar con una  __,__ las condiciones se exige el cumplimiento de ambas. En caso de desear que se cumpla alguna de las condiciones debe utilizarse el caracter __|__.
+#Si escribo CULTIVO == "SOJA" --> ERROR
+``` 
+
+Ahora si queremos conocer cuales son las campañas con la produccion de soja superior a las 40 MT, debemos tener un doble cumplimiento
 
 ```{r}
 Datos %>% 
-  filter(TASA > 10 | INDICADOR == "Tasa de Desocupación")
+  filter(CULTIVO == "Soja" , PRODUCCION>40)
+
+#EQUIVALENTE A HACER Datos %>% filter(CULTIVO == "Soja" & PRODUCCION>40)
+```
+
+
+Nótese que en este caso al separar con una  __,__ o _&_ las condiciones se exige el cumplimiento de ambas. En caso de desear que se cumpla alguna de las condiciones debe utilizarse el caracter __|__.
+
+Todas las campañas de soja cumplen con al menos una de las dos condiciones y en el caso del maíz ocurre lo mismo.
+
+```{r}
+Datos %>% 
+  filter(CULTIVO == "Soja" | PRODUCCION>40)
 ```
 
 #### rename
@@ -86,10 +120,50 @@ Permite renombrar una columna de la tabla. Funciona de la siguiente manera:
 
 ```{r}
 Datos %>% 
-  rename(Periodo = FECHA)
+  rename(GRANO = CULTIVO)
+
 ```
 
 Nótese que, a diferencia del ejemplo de la función __filter__ donde utilizábamos __==__ para comprobar una condición lógica, en este caso se utiliza sólo un __=__ ya que lo estamos haciendo es _asignar_ un nombre.
+
+Además, estamos trabajando sobre el dataset sin modificarlo, por lo tanto si entramos a verlo nuevamente permanece como estaba inicialmente. Con cualquiera de las 3 opciones:
+
+*View() --> muestra todo el dataset
+*head() --> muestra los 10 primeros registros
+*hail() --> muestra los últimos 10 registros
+```{r}
+View(Datos)
+head(Datos)
+tail(Datos)
+```
+
+En caso de querer modificar el dataset tenemos que asignar las variaciones al mismo o a una nueva variable.
+
+Veamos como se cambia el nombre de la columna en *Datos*.
+```{r}
+Datos <- Datos %>% 
+  rename(GRANO = CULTIVO)
+
+Datos
+```
+#### select
+Permite especificar la serie de columnas que se desea conservar de un DataFrame. También pueden especificarse las columnas que se desean descartar (agregándoles un _-_ adelante). Muy útil para agilizar el trabajo en bases de datos de gran tamaño.
+
+Queremos reordenar las columnas campaña, grano, area y producción.
+
+```{r}
+Datos <- Datos %>% 
+  select("CAMPANA", "GRANO", "AREA", "PRODUCCION")
+```
+La función **select** tambien se puede aplicar luego de un filtro para obtener esa columna.
+
+Solamente mostrar las campañas donde la soja tiene una producción a 40 MT
+
+```{r}
+Datos %>%
+  filter(GRANO == "Soja" & PRODUCCION>40) %>% 
+  select("CAMPANA")
+```
 
 #### mutate
 
@@ -99,39 +173,32 @@ En caso de especificar el nombre de una columna existente, el resultado de la op
 
 ```{r}
 Datos <- Datos %>% 
-  mutate(PROPORCION = TASA / 100)
+  mutate(RINDE = PRODUCCION / AREA)
+
+Datos
+```
+El rinde se encuentra en tn/ha por lo tanto para si lo queremos pasar a quintales y guardarlo en la base deberiamos hacer el siguiente código.
+```{r}
+Datos$RINDE = Datos$RINDE*10
 
 Datos
 ```
 
 #### case_when
 
-Permite definir una variable, de forma tal que tome un valor particular para cada condición establecida. En caso de no cumplir con ninguna de las condiciones establecidas, la variable tomará valor __NA__.   
+Permite definir una variable, de forma tal que tome un valor particular para cada condición establecida. 
+
 La sintaxis de la función es:   
 `case_when(condicion lógica1 ~ valor asignado1)`
 
-```{r}
-Datos <- Datos %>% 
-  mutate(CODIGO = case_when(INDICADOR == "Tasa de Actividad"    ~ "ACT",
-                            INDICADOR == "Tasa de Empleo"       ~ "EMP",
-                            INDICADOR == "Tasa de Desocupación" ~ "DES"))
-
-Datos
-```
-
 Si querémos asignar un valor a todo lo que no cumple ningúna de las condiciones anteriores, podemos poner `TRUE ~ valor`
 
-#### select
-
-Permite especificar la serie de columnas que se desea conservar de un DataFrame. También pueden especificarse las columnas que se desean descartar (agregándoles un _-_ adelante). Muy útil para agilizar el trabajo en bases de datos de gran tamaño.
-
 ```{r}
-Datos2 <- Datos %>% 
-  select(CODIGO, FECHA, PROPORCION)
-Datos2
-
 Datos <- Datos %>% 
-  select(-c(PROPORCION, CODIGO))
+  mutate(CODIGO = case_when(GRANO == "Soja"    ~ "S",
+                            GRANO == "Trigo"       ~ "T",
+                            TRUE ~ "M"))
+
 Datos
 ```
 
@@ -141,7 +208,7 @@ Permite ordenar la tabla según los valores de determinada/s variable/s. Es úti
 
 ```{r}
 Datos <- Datos %>% 
-  arrange(INDICADOR, FECHA)
+  arrange(AREA, PRODUCCION,RINDE)
 
 Datos
 ```
@@ -152,20 +219,20 @@ Crea una nueva tabla que resuma la información original. Para ello, definimos l
 
 ```{r}
 Datos %>% 
-  filter(INDICADOR == "Tasa de Desocupación") %>% 
-  summarise(INDICE_MAX = max(TASA),
-            INDICE_MIN = min(TASA),
-            INDICE_PROM = mean(TASA))
+  filter(GRANO == "Soja") %>% 
+  summarise(RINDE_MAX = max(RINDE),
+            RINDE_MIN = min(RINDE),
+            RINDE_PROM = mean(RINDE))
 ```
 
 #### group_by
 
-Esta función permite realizar operaciones de forma agrupada. Lo que hace la función es "separar" a la tabla según los valores de la variable indicada y realizar las operaciones que se especifican a continuación, de manera independiente para cada una de las "subtablas". En nuestro ejemplo, podría ser útil para calcular el promedio de las tasas por _INDICADOR_. 
+Esta función permite realizar operaciones de forma agrupada. Lo que hace la función es "separar" a la tabla según los valores de la variable indicada y realizar las operaciones que se especifican a continuación, de manera independiente para cada una de las "subtablas". En nuestro ejemplo, vamos a calcular el rinde promedio por _CAMPANA_. 
 
 ```{r}
 Datos %>% 
-  group_by(INDICADOR) %>%
-  summarise(INDICE_PROM = mean(TASA))
+  group_by(CAMPANA) %>%
+  summarise(CAMPANA_PROM = mean(RINDE))
 ```
 
 ### Joins
@@ -178,33 +245,34 @@ Otra implementación muy importante del paquete dplyr son las funciones para uni
 #### left_join    
 
 Veamos un ejemplo de la función __left_join__ (una de las más utilizadas en la práctica).       
-Para ello crearemos previamente un Dataframe que contenga las cantidades de población total y población económicamente activa para cada uno de los períodos del Dataframe _Datos_.
+Para ello crearemos previamente un Dataframe que contenga ENSO y las precipitaciones para cada una de las campañas del Dataframe _Datos_.
+
+**Nota**:Estos datos son inventados.
 
 ```{r}
-Poblaciones <- data.frame(FECHA = c("2018.3T", "2018.4T", "2019.1T"),
-                          POBLACION_miles = c(27842, 27914, 28261),
-                          PEA_miles = c(12990, 12979, 13285))
+Clima <- data.frame(CAMPANA = c("2017/18","2018/19","2019/20"),
+                          ENSO = c("NIÑO", "NIÑA", "NEUTRO"),
+                          PRECIPITACIONES = c(500, 1200, 850))
 
-Poblaciones
+Clima
 ```
 
 Unimos nuestras dos tablas. La siguiente forma de realizarlo es equivalente a:   
-`Datos_join <- left_join(Datos, Poblaciones, by = "FECHA")`
+`Datos_join <- left_join(Datos, Clima, by = "CAMPANA")`
 
 ```{r}
 Datos_join <- Datos %>% 
-  left_join(Poblaciones, by = "FECHA")
+  left_join(Clima, by = "CAMPANA")
 
 Datos_join
 ```
 
-Finalmente, podemos calcular la cantidad de personas desocupadas en cada uno de los períodos con los que contamos.
+Finalmente, podemos calcular el rinde promedio de cada campaña según el ENSO.
 
 ```{r}
 Datos_join %>% 
-  filter(INDICADOR == "Tasa de Desocupación") %>% 
-  group_by(FECHA) %>% 
-  summarise(DESOCUP_miles = round(TASA/100 * PEA_miles, 0))
+  group_by(ENSO) %>% 
+  summarise(RINDE_PROMEDIO = mean(RINDE))
 ```
 
 ### Tidyr
@@ -257,6 +325,7 @@ head(iris_horizontal)
 El paquete lubridate está pensado para trabajar con los datos tipo fecha (date) o fecha-hora (datetime) para cambiarles el formato, realizar operaciones y extraer información
 
 ```{r}
+#install.packages("lubridate")
 library(lubridate)
 ```
 
@@ -275,6 +344,8 @@ Con la función dmy_hms podemos convertir este string a una fecha: estamos indic
 fecha  <- dmy_hms(fecha)
 fecha
 ```
+
+**ATENCIÓN** que al verlo aparecera _yyyy-mm-dd_.
 
 Muchas funciones de lubridate operan con esta misma lógica.   
 
@@ -309,5 +380,11 @@ Podemos sumar o restarle cualquier período de tiempo a un objeto datetime
 fecha + days(2)
 # Resto 1 semana y dos horas
 fecha - (weeks(1) + hours(2))
+```
+
+Tambien podemos conocer el número de semana facilmente.
+
+```{r}
+week(fecha)
 ```
 
