@@ -10,8 +10,6 @@ subtitle: Práctica Guiada
 
 ### Caso práctico: Gráficos de ingresos - EPH
 
-Para esta práctica utilizaremos las variables de ingresos captadas por la [Encuesta Permanente de Hogares](https://www.indec.gob.ar/indec/web/Institucional-Indec-BasesDeDatos)
-
 A continuación utilzaremos los conceptos abordados, para realizar gráficos a partir de las variables de ingresos.        
 
 ```{r, warning=FALSE, message=FALSE}

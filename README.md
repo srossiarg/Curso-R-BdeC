@@ -51,6 +51,10 @@ Ahora [descarguen RStudio](https://rstudio.com/products/rstudio/download/), tamb
 * Gráficos con múltiples cruces de variables.
 * Mapas en R
 
+### Materiales
+- [Explicación](clase_3/03_explicacion.nb.html)
+
+
 ## Clase 4: 9-12
 ### Documentación en R
 * Manejo de las extensiones del software “Rmarkdown” y “RNotebook” para elaborar documentos de trabajo, presentaciones interactivas e informes:
