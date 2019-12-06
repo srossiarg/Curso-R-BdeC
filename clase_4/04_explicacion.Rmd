@@ -138,7 +138,7 @@ departamentos<-st_crop(departamentos, box) #cortamos
 plot(st_geometry(departamentos),col = NA, border = "grey", axes=T) #graficamos Argentina continental
 ```
 
-Pero deciamos que la proyeccion mercator distorsiona un poco el tamaño del país. Si quisieramos cambiar la proyeccion por la oficial que es la gauss-kruger o una aproximación ([Transverse Mercator](https://epsg.io/5345)).
+Pero deciamos que la proyeccion mercator distorsiona un poco el tamaño del país. Si quisieramos cambiar la proyeccion por la oficial que es la gauss-kruger o una aproximación ([Transverse Mercator](https://epsg.io/5345)). Debemos aplicar `st_transform` con el codgo crs correspondiente a la transfomración que deseamos.
 
 ```{r}
 #https://epsg.io/?q=Argentina%20kind%3APROJCRS
@@ -146,10 +146,14 @@ mapa_oficial<-departamentos %>% st_transform(crs = 5345)
 st_crs(mapa_oficial)
 ```
 
+Como podemos ver la proyección de mercator transverse no distorsiona la distancias de Argentina.
 ```{r fig.height = 8, fig.width = 5}
 plot(st_geometry(mapa_oficial), col = NA, border = "gray",axes = TRUE)
 ```
 
+### Mapear datos externos
+
+Para poder mapear datos externos es necesario unir el dataset externo con el dataset que tienen la información geográfica. Esto lo hacemos con las funciones `join` que vimos en la segunda clase.
 
 ```{r}
 #Genero variables ID.Provincia y ID.Departamento para join con Estimaciones
@@ -171,6 +175,12 @@ mapa_oficial <-  mapa_oficial %>% left_join(estimaciones, by = c("ID.Departament
 head(mapa_oficial)
 ```
 
+
+Ahora podemos mapear la información. El paquete [Cartography](https://github.com/riatelab/cartography) tiene muchas funcionalidades.
+
+Mapas choropleth se aplcia la función `choroLayer`. Al igual que con ggplot los gráficos se construyen por capas. Tampoco es necesario recordar el código de memoria. Cuando haya que usarlo podemos visitar el [machete](http://riatelab.github.io/cartography/vignettes/cheatsheet/cartography_cheatsheet.pdf).
+
+
 ```{r fig.height = 8, fig.width = 6}
 choroLayer(
   x = mapa_oficial, 
@@ -186,6 +196,7 @@ choroLayer(
 ```
 
 
+Combinandolo con Tydiverse podemos transformar los datos facilmente y mapearlos. Por ejemplo, a continuación cambiamos la unidades y el nombre de la variable que registra el rendimiento de la soja.
 ```{r fig.height = 8, fig.width = 6}
 mapa_oficial  <- mapa_oficial %>% rename(Rinde = Rendimiento..Kg.Ha.) %>% mutate(Rinde = Rinde/1000)
 
@@ -206,6 +217,9 @@ choroLayer(
 
 layoutLayer( title = "SOJA", tabtitle = TRUE, frame = TRUE, author = "Bolsa de Cereales", sources = "Fuente: PAS",  north = TRUE,  scale = 500)
 ```
+
+
+Tambien se pueden hacer mapas con más chiches
 
 ```{r fig.height = 8, fig.width = 6}
 data("nuts2006")
