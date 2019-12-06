@@ -15,7 +15,7 @@ R cuenta con varios paquetes de funciones que permiten manipular información es
 ### Requisitos
 
 ```{r}
-install.packages(c("sf"))
+install.packages(c("sf","cartography"))
 ```
 
 
