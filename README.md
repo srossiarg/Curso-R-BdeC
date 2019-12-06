@@ -49,20 +49,15 @@ Ahora [descarguen RStudio](https://rstudio.com/products/rstudio/download/), tamb
 * Gráficos de línea, barras, Boxplots y distribuciones de densidad
 * Parámetros de los gráficos: Leyendas, ejes, títulos, notas, colores
 * Gráficos con múltiples cruces de variables.
-* Mapas en R
 
 ### Materiales
 - [Explicación](clase_3/03_explicacion.nb.html)
 
 
 ## Clase 4: 9-12
-### Documentación en R
-* Manejo de las extensiones del software “Rmarkdown” y “RNotebook” para elaborar documentos de trabajo, presentaciones interactivas e informes:
-* Opciones para mostrar u ocultar código en los reportes
-* Definición de tamaño, títulos y formato con el cual se despliegan los gráficos y tablas en el informe
-* Caracteres especiales para incluir múltiples recursos en el texto del informe: Links a páginas web, notas al pie, enumeraciones, cambios en el formato de letra (tamaño, negrita, cursiva)
-* Código embebido en el texto para automatización de reportes
-* Git (intro)
+### Mapas en R
+* introducción a GIS
+* Mapas en R: paquetes sf y cartography.
 
 ### Materiales
 - [Explicación](clase_4/04_explicacion.nb.html)
