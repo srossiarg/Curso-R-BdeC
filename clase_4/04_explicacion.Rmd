@@ -80,7 +80,7 @@ library(tidyverse)
 
 En este caso vamos a usar el geojson de departamentos disponible en [link](https://datos.gob.ar/is/dataset/ign-unidades-territoriales/archivo/ign_01.03.02)
 
-Tambien se creo recientemente el repositorio [IDERA](https://www.idera.gob.ar/)
+También se creo recientemente el repositorio [IDERA](https://www.idera.gob.ar/)
 
 ```{r}
 departamentos <- st_read("../datasets/departamentos/departamento.geojson")
@@ -90,7 +90,7 @@ Dediquemos un momento para describir la información que apareció al leer el ar
 
 * `Simple feature collection with 530 features and 5 fields`: Cargamos una colección de “simple features” (entidades geométricas en la jerga de la cartografía digital), compuesta por 530 rasgos y 5 campos, que se traduce como 530 observaciones/filas con 5 variables/columnas.
 
-* `geometry type:  MULTIPOLYGON`: los archivos con información geográfica contienen colecciones de puntos, de líneas, o de polígonos. En éste caso son polígonos; tiene sentido para la información que esperamos, que son los departamentos de Argnetina.
+* `geometry type:  MULTIPOLYGON`: los archivos con información geográfica contienen colecciones de puntos, de líneas, o de polígonos. En éste caso son polígonos; tiene sentido para la información que esperamos, que son los departamentos de Argentina.
 
 * `dimension: XY`: la información es “plana”, en dos dimensiones X e Y. No incluye información de alturas, que estaría en la dimensión Z. Es lo típico, rara vez trabajaremos con archivos tridimensionales.
 
@@ -116,19 +116,19 @@ nam:	Término específico (NAM) o nombre corto del departamento.
 
 ### Viasualizacion de archivos de información geográfica
 
-La función `plot` aplicada sobre la saldida de la función `st_geommetry` nos grafica la geomtria del dataset.
+La función `plot` aplicada sobre la salida de la función `st_geommetry` nos gráfica la geométrica del dataset.
 
 ```{r fig.height = 8, fig.width = 5}
 plot(st_geometry(departamentos), col = NA, border = "grey",axes = TRUE)
 ```
-La fiigura parece un poco apretada. Veamos el CRS de esta figura
+La figura parece un poco apretada. Veamos el CRS de esta figura
 ```{r}
 st_crs(departamentos)
 ```
-Es la proyeccion Mercator. Que distorsiona un poco las ditancias lejanas al Ecuador.
+Es la proyección Mercator. Que distorsiona un poco las distancias lejanas al Ecuador.
 
 
-Si quisieramos descartar la Antartida Argentina para concentrarnos en el continente tenemos que recortar el bounding box.
+Si quisiéramos descartar la Antártida Argentina para concentrarnos en el continente tenemos que recortar el bounding box.
 
 ```{r echo=TRUE,warning=FALSE, message=FALSE, fig.height = 8, fig.width = 5}
 
@@ -138,7 +138,7 @@ departamentos<-st_crop(departamentos, box) #cortamos
 plot(st_geometry(departamentos),col = NA, border = "grey", axes=T) #graficamos Argentina continental
 ```
 
-Pero deciamos que la proyeccion mercator distorsiona un poco el tamaño del país. Si quisieramos cambiar la proyeccion por la oficial que es la gauss-kruger o una aproximación ([Transverse Mercator](https://epsg.io/5345)). Debemos aplicar `st_transform` con el codgo crs correspondiente a la transfomración que deseamos.
+Pero decíamos que la proyección mercator distorsiona un poco el tamaño del país. Si quisiéramos cambiar la proyección por la oficial que es la gauss-kruger o una aproximación ([Transverse Mercator](https://epsg.io/5345)). Debemos aplicar `st_transform` con el codigo crs correspondiente a la transformación que deseamos.
 
 ```{r}
 #https://epsg.io/?q=Argentina%20kind%3APROJCRS
@@ -178,7 +178,7 @@ head(mapa_oficial)
 
 Ahora podemos mapear la información. El paquete [Cartography](https://github.com/riatelab/cartography) tiene muchas funcionalidades.
 
-Mapas choropleth se aplcia la función `choroLayer`. Al igual que con ggplot los gráficos se construyen por capas. Tampoco es necesario recordar el código de memoria. Cuando haya que usarlo podemos visitar el [machete](http://riatelab.github.io/cartography/vignettes/cheatsheet/cartography_cheatsheet.pdf).
+Mapas choropleth se aplica la función `choroLayer`. Al igual que con ggplot los gráficos se construyen por capas. Tampoco es necesario recordar el código de memoria. Cuando haya que usarlo podemos visitar el [machete](http://riatelab.github.io/cartography/vignettes/cheatsheet/cartography_cheatsheet.pdf).
 
 
 ```{r fig.height = 8, fig.width = 6}
@@ -196,7 +196,7 @@ choroLayer(
 ```
 
 
-Combinandolo con Tydiverse podemos transformar los datos facilmente y mapearlos. Por ejemplo, a continuación cambiamos la unidades y el nombre de la variable que registra el rendimiento de la soja.
+Combinándolo con Tydiverse podemos transformar los datos fácilmente y mapearlos. Por ejemplo, a continuación cambiamos la unidades y el nombre de la variable que registra el rendimiento de la soja.
 ```{r fig.height = 8, fig.width = 6}
 mapa_oficial  <- mapa_oficial %>% rename(Rinde = Rendimiento..Kg.Ha.) %>% mutate(Rinde = Rinde/1000)
 
@@ -219,7 +219,7 @@ layoutLayer( title = "SOJA", tabtitle = TRUE, frame = TRUE, author = "Bolsa de C
 ```
 
 
-Tambien se pueden hacer mapas con más chiches
+También se pueden hacer mapas con más chiches
 
 ```{r fig.height = 8, fig.width = 6}
 data("nuts2006")
