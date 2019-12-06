@@ -63,6 +63,11 @@ Ahora [descarguen RStudio](https://rstudio.com/products/rstudio/download/), tamb
 * Caracteres especiales para incluir múltiples recursos en el texto del informe: Links a páginas web, notas al pie, enumeraciones, cambios en el formato de letra (tamaño, negrita, cursiva)
 * Código embebido en el texto para automatización de reportes
 * Git (intro)
+
+### Materiales
+- [Explicación](clase_4/04_explicacion.nb.html)
+
+
 # Referencias
 
 * [Notas de clase del curso de introducción a Data Science. Práctica Guiada. Diego Kozlowski y Natsumi Shokida ](https://diegokoz.github.io/intro_ds_bookdown/index.html)
