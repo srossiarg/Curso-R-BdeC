@@ -63,6 +63,16 @@ Ahora [descarguen RStudio](https://rstudio.com/products/rstudio/download/), tamb
 - [Explicación](clase_4/04_explicacion.nb.html)
 
 
+## Clase extra
+### Conección SQL Server
+* Conección a SQL Server
+* Paquetes DBI y dbplyr
+* Ejemplos con base ReTAA
+
+### Materiales
+- [Explicación](clase_5/DB_en_R.html)
+
+
 # Referencias
 
 * [Notas de clase del curso de introducción a Data Science. Práctica Guiada. Diego Kozlowski y Natsumi Shokida ](https://diegokoz.github.io/intro_ds_bookdown/index.html)

@@ -1,0 +1,723 @@
+---
+title: Bases SQL en R
+subtitle: Introducción
+date: ""
+output:
+  html_notebook:
+    toc: true
+    toc_float: true
+---
+
+R cuenta con varios paquetes de funciones que permiten trabajar con bases SQL con facilidad. A continuación vamos a ver algunas herramientas y ejemplos de como trabajar las bases de datos de la BdeC con R.
+
+
+### Paquetes
+
+Hay dos paquetes útiles para trabajar bases SQL `DBI` y `RODBC`. Asimismo, `dplyr` cuenta con funciones que permiten exportar las consultas a formato SQL.
+
+```{r, message=FALSE,warning=FALSE}
+library(RODBC)
+library(tidyverse)
+library(dbplyr)
+```
+
+### Conexión a la base y consultas
+
+Me conecto a la base con la funcion odbcDriverConnect.
+
+```{r}
+ch <- odbcDriverConnect(
+  connection = "Driver=SQL Server; Server=BC-RETA;
+                Database=Estimaciones_copia;
+                UID=estimaciones_consulta;
+                Pwd=Esti.bc.201923"
+  )
+
+```
+
+
+### Consulta SQL
+
+sqlQuery permite utilizar el codigo de sql en R. La consulta se inserta como string.
+
+En esta consulta seleccionamos se combinan 5 tablas y se selecciona para el cultivo trigo, en la campaña 18/19,  en el nivel tecnologico alto, en la zona Retaa 5 las dosis de fertilizacion promedio.
+
+```{r, echo=T}
+consulta_Ruben <- sqlQuery(channel = ch, query = "--/////////////////////////////////////////////
+--@id_consulta
+--6	Fertilización
+--7	Herbicidas
+--8	Insecticidas
+--3	Siembra
+--10 Tratamiento de semilla
+--9	Fungicidas
+--/////////////////////////////////////////////
+--@id_grano
+--1	Trigo
+--2	Cebada
+--3	Girasol
+--4	Sorgo
+--5	Soja 1°
+--6	Soja 2°
+--7	Maíz 1° Temprano
+--8	Maíz 1° Tardio y 2°
+--/////////////////////////////////////////////
+--@id_nivel
+--1	Alto
+--2	Medio
+--3	Bajo
+--/////////////////////////////////////////////
+--@id_zona
+--1	    I	NOA
+--2	    IIe	NEA Este (Chaco y Formosa)
+--3	    III	Ctro N Cba
+--4	    IV	S Cba
+--5	    Vc	Ctro N SFe
+--6	    VI	Núcleo Norte
+--7	    VII	Núcleo Sur
+--8	    VIII	Ctro E ER
+--9	    IX	N LP-OBA
+--10	X	Ctro BA
+--11	XI	SO BA-S LP
+--12	XII	SE BA
+--13	XIII	San Luis
+--14	XIV	Cuenca Sal
+--15	XV	Corrientes-Misiones
+--16	IIo	NEA Oeste (este de Sgo. del Estero)
+--17	Vn	Norte SFe
+--/////////////////////////////////////////////
+--@id_campaña
+--1	 2010/2011
+--2	 2011/2012
+--3	 2012/2013
+--4	 2013/2014
+--5	 2014/2015
+--6	 2015/2016
+--7	 2016/2017
+--8	 2017/2018
+--9	 2018/2019
+--10 2019/2020
+
+declare @id_campaña int
+declare @id_consulta int
+declare @id_grano int
+declare @id_nivel int
+declare @id_zona int
+
+set @id_campaña= 9 -- 2018/2019
+set @id_consulta= 6--Fertilización
+set @id_grano = 1 --Trigo
+set @id_nivel= 1 -- nivel 1
+set @id_zona = 5 -- Vc	Ctro N SFe 
+
+SELECT (SELECT descripcion
+                  FROM      Tipo_promedios
+                  WHERE   (id = 1)) AS des_prom, 1 AS tipo_promedio, xx.id, xx.id_grano,
+                          gg.descripcion AS des_grano, cc.id_tipo_pregunta, cc.id_caract, 
+                            cc.descripcion AS des_caract, nn.descripcion AS des_nivel, xx.id_nivel,
+                          xx.id_zona, zz.descripcion AS Expr1, zz.descripcion2, 
+                            CAST(ISNULL((SELECT SUM(max) / COUNT(1) AS Expr1
+                          FROM(SELECT ISNULL(t.max, 0) AS max
+                          FROM Tipo_caracteristicas_retaa_trans AS t LEFT OUTER JOIN
+                          cabecera_transacciones_retaa AS c ON c.id_trans = t.id_trans
+                          WHERE   (t.max IS NOT NULL) AND (t.id_grano = xx.id_grano) AND
+                          (t.id_campaña = @id_campaña) AND (t.id_tipo_pregunta IN
+                          (SELECT c.id_tipo_pregunta  FROM tipo_pregunta_retaa AS
+                          p LEFT OUTER JOIN  Tipo_caracteristicas_retaa AS
+                          c ON p.id = c.id_tipo_pregunta WHERE (p.id_filtro IN
+                          (cc.id_tipo_pregunta)) AND (c.id_grano = xx.id_grano)
+                                                                  GROUP BY c.id_tipo_pregunta)) AND (t.nivel = xx.id_nivel) AND (t.max_estado = 1) AND (t.id_caract = cc.id_caract_2) AND (t.estado_nivel = 1) AND (c.id_zona = xx.id_zona) AND
+                                                                 ((SELECT COUNT(1) AS Expr1
+                                                                   FROM      cabecera_transacciones_retaa
+                                                                   WHERE   (estado = 1) AND (id_trans = t.id_trans)) > 0)) AS a_2), 0) AS DECIMAL(10, 2)) AS Alto_Promedio_max, 'http://bc-sellos/PruebaRetaa/pop_up_X_rubros.aspx?par=' + CAST(@id_campaña AS nvarchar(1)) 
+                  + ';' + CAST(xx.id_grano AS nvarchar(2)) + ';' + CAST(xx.id_zona AS nvarchar(2)) + ';' + CAST(cc.id_tipo_pregunta AS nvarchar(2)) + ';' + CAST(cc.id_caract_2 AS nvarchar(3)) + ';' + CAST(xx.id_nivel AS nvarchar(3)) + ';' + '0' AS URL, 
+                  CAST(ISNULL
+                      ((SELECT SUM(min) / COUNT(1) AS Expr1
+                        FROM      (SELECT ISNULL(t.min, 0) AS min
+                                           FROM      Tipo_caracteristicas_retaa_trans AS t LEFT OUTER JOIN
+                                                             cabecera_transacciones_retaa AS c ON c.id_trans = t.id_trans
+                                           WHERE   (t.min IS NOT NULL) AND (t.id_grano = xx.id_grano) AND (t.id_campaña = @id_campaña) AND (t.id_tipo_pregunta IN
+                                                                 (SELECT c.id_tipo_pregunta
+                                                                  FROM      tipo_pregunta_retaa AS p LEFT OUTER JOIN
+                                                                                    Tipo_caracteristicas_retaa AS c ON p.id = c.id_tipo_pregunta
+                                                                  WHERE   (p.id_filtro = cc.id_tipo_pregunta) AND (c.id_grano = xx.id_grano)
+                                                                  GROUP BY c.id_tipo_pregunta)) AND (t.nivel = xx.id_nivel) AND (t.min_estado = 1) AND (t.id_caract = cc.id_caract_2) AND (t.estado_nivel = 1) AND (c.id_zona = xx.id_zona) AND
+                                                                 ((SELECT COUNT(1) AS Expr1
+                                                                   FROM      cabecera_transacciones_retaa AS cabecera_transacciones_retaa_7
+                                                                   WHERE   (estado = 1) AND (id_trans = t.id_trans)) > 0)) AS a_2_1), 0) AS DECIMAL(10, 2)) AS Alto_Promedio_min, ISNULL
+                      ((SELECT SUM(max_null) / COUNT(1) AS Expr1
+                        FROM      (SELECT (CASE WHEN porc_aplic IS NULL THEN ISNULL(t .max, 0) ELSE ISNULL(t .max, 0) * porc_aplic / 100 END) AS max_null
+                                           FROM      Tipo_caracteristicas_retaa_trans AS t LEFT OUTER JOIN
+                                                             cabecera_transacciones_retaa AS c ON c.id_trans = t.id_trans
+                                           WHERE   (t.id_grano = xx.id_grano) AND (t.id_campaña = @id_campaña) AND (t.id_tipo_pregunta IN
+                                                                 (SELECT c.id_tipo_pregunta
+                                                                  FROM      tipo_pregunta_retaa AS p LEFT OUTER JOIN
+                                                                                    Tipo_caracteristicas_retaa AS c ON p.id = c.id_tipo_pregunta
+                                                                  WHERE   (p.id_filtro = cc.id_tipo_pregunta) AND (c.id_grano = xx.id_grano)
+                                                                  GROUP BY c.id_tipo_pregunta)) AND (t.nivel = xx.id_nivel) AND (t.max_estado = 1) AND (t.id_caract = cc.id_caract_2) AND (t.estado_nivel = 1) AND (c.id_zona = xx.id_zona) AND
+                                                                 ((SELECT COUNT(1) AS Expr1
+                                                                   FROM      cabecera_transacciones_retaa AS cabecera_transacciones_retaa_6
+                                                                   WHERE   (estado = 1) AND (id_trans = t.id_trans)) > 0)) AS gg_1), 0) AS Alto_Promedio_max_null, ISNULL
+                      ((SELECT SUM(max_null) / COUNT(1) AS Expr1
+                        FROM      (SELECT (CASE WHEN porc_aplic IS NULL THEN ISNULL(t .min, 0) ELSE ISNULL(t .min, 0) * porc_aplic / 100 END) AS max_null
+                                           FROM      Tipo_caracteristicas_retaa_trans AS t LEFT OUTER JOIN
+                                                             cabecera_transacciones_retaa AS c ON c.id_trans = t.id_trans
+                                           WHERE   (t.id_grano = xx.id_grano) AND (t.id_campaña = @id_campaña) AND (t.id_tipo_pregunta IN
+                                                                 (SELECT c.id_tipo_pregunta
+                                                                  FROM      tipo_pregunta_retaa AS p LEFT OUTER JOIN
+                                                                                    Tipo_caracteristicas_retaa AS c ON p.id = c.id_tipo_pregunta
+                                                                  WHERE   (p.id_filtro = cc.id_tipo_pregunta) AND (c.id_grano = xx.id_grano)
+                                                                  GROUP BY c.id_tipo_pregunta)) AND (t.nivel = xx.id_nivel) AND (t.min_estado = 1) AND (t.id_caract = cc.id_caract_2) AND (t.estado_nivel = 1) AND (c.id_zona = xx.id_zona) AND
+                                                                 ((SELECT COUNT(1) AS Expr1
+                                                                   FROM      cabecera_transacciones_retaa AS cabecera_transacciones_retaa_5
+                                                                   WHERE   (estado = 1) AND (id_trans = t.id_trans)) > 0)) AS gg_1_1), 0) AS Alto_Promedio_min_null, cc.id_indice,
+                      (SELECT descripcion
+                       FROM      tipo_pregunta_retaa
+                       WHERE   (id =
+                                             (SELECT id_filtro
+                                              FROM      tipo_pregunta_retaa AS tipo_pregunta_retaa_3
+                                              WHERE   (id IN (cc.id_tipo_pregunta))))) AS des_consulta, CAST
+                      (((SELECT SUM(max) / COUNT(1) AS Expr1
+                         FROM      (SELECT ISNULL(t.max, 0) AS max
+                                            FROM      Tipo_caracteristicas_retaa_trans AS t LEFT OUTER JOIN
+                                                              cabecera_transacciones_retaa AS c ON c.id_trans = t.id_trans
+                                            WHERE   (t.id_grano = xx.id_grano) AND (t.id_campaña = @id_campaña) AND (t.id_tipo_pregunta =
+                                                                  (SELECT TOP (1) id_tipo_pregunta
+                                                                   FROM      caract_id_grano AS caract_id_grano_2
+                                                                   WHERE   (id_caract = gg.id_filtro_caract))) AND (t.nivel = 1) AND (t.id_caract = gg.id_filtro_caract) AND (t.max_estado = 1) AND (c.id_zona = xx.id_zona) AND
+                                                                  ((SELECT COUNT(1) AS Expr1
+                                                                    FROM      cabecera_transacciones_retaa AS cabecera_transacciones_retaa_2
+                                                                    WHERE   (estado = 1) AND (id_trans = t.id_trans)) > 0)) AS a_2_1_2) +
+                      (SELECT SUM(min) / COUNT(1) AS Expr1
+                       FROM      (SELECT ISNULL(t.min, 0) AS min
+                                          FROM      Tipo_caracteristicas_retaa_trans AS t LEFT OUTER JOIN
+                                                            cabecera_transacciones_retaa AS c ON c.id_trans = t.id_trans
+                                          WHERE   (t.id_grano = xx.id_grano) AND (t.id_campaña = @id_campaña) AND (t.id_tipo_pregunta =
+                                                                (SELECT TOP (1) id_tipo_pregunta
+                                                                 FROM      caract_id_grano AS caract_id_grano_1
+                                                                 WHERE   (id_caract = gg.id_filtro_caract))) AND (t.nivel = 1) AND (t.id_caract = gg.id_filtro_caract) AND (t.min_estado = 1) AND (c.id_zona = xx.id_zona) AND
+                                                                ((SELECT COUNT(1) AS Expr1
+                                                                  FROM      cabecera_transacciones_retaa AS cabecera_transacciones_retaa_1
+                                                                  WHERE   (estado = 1) AND (id_trans = t.id_trans)) > 0)) AS a_2_1_1_1)) / 2 / 100 *
+                      (SELECT superficie
+                       FROM      Superficie_retaa_x_campaña_grano AS Superficie_retaa_x_campaña_grano_1
+                       WHERE   (id_grano = gg.id_grano_report) AND (id_zona = xx.id_zona) AND (id_campaña = @id_campaña)) AS DECIMAL(10, 0)) AS superficie_2, CAST
+                      ((SELECT superficie
+                        FROM      Superficie_retaa_x_campaña_grano
+                        WHERE   (id_grano = gg.id_grano_report) AND (id_zona = xx.id_zona) AND (id_campaña = @id_campaña)) AS DECIMAL(10, 0)) AS superficie, zz.indice,
+                      (SELECT SUM(max) / COUNT(1) AS Expr1
+                       FROM      (SELECT ISNULL(t.max, 0) AS max
+                                          FROM      Tipo_caracteristicas_retaa_trans AS t LEFT OUTER JOIN
+                                                            cabecera_transacciones_retaa AS c ON c.id_trans = t.id_trans
+                                          WHERE   (t.id_grano = xx.id_grano) AND (t.id_campaña = @id_campaña) AND (t.id_tipo_pregunta = 2) AND (t.nivel = xx.id_nivel) AND (t.id_caract = 4) AND (t.max_estado = 1) AND (c.id_zona = xx.id_zona) AND
+                                                                ((SELECT COUNT(1) AS Expr1
+                                                                  FROM      cabecera_transacciones_retaa AS cabecera_transacciones_retaa_4
+                                                                  WHERE   (estado = 1) AND (id_trans = t.id_trans)) > 0)) AS a_2_1_1) AS Alto_Promedio_max_distribucion,
+                      (SELECT SUM(max) / COUNT(1) AS Expr1
+                       FROM      (SELECT ISNULL(t.max, 0) AS max
+                                          FROM      Tipo_caracteristicas_retaa_trans AS t LEFT OUTER JOIN
+                                                            cabecera_transacciones_retaa AS c ON c.id_trans = t.id_trans
+                                          WHERE   (t.id_grano IN
+                                                                (SELECT ID_MAPA
+                                                                 FROM      Tipo_grano_reportes
+                                                                 WHERE   (id = gg.id_grano_report))) AND (t.id_campaña = @id_campaña) AND (t.id_tipo_pregunta =
+                                                                (SELECT TOP (1) id_tipo_pregunta
+                                                                 FROM      caract_id_grano AS caract_id_grano_2
+                                                                 WHERE   (id_caract = gg.id_filtro_caract))) AND (t.nivel = 1) AND (t.id_caract = gg.id_filtro_caract) AND (t.max_estado = 1) AND (c.id_zona = xx.id_zona) AND
+                                                                ((SELECT COUNT(1) AS Expr1
+                                                                  FROM      cabecera_transacciones_retaa AS cabecera_transacciones_retaa_2
+                                                                  WHERE   (estado = 1) AND (id_trans = t.id_trans)) > 0)) AS a_2_1_2_1) *
+                      (SELECT superficie
+                       FROM      Superficie_retaa_x_campaña_grano AS Superficie_retaa_x_campaña_grano_1
+                       WHERE   (id_grano = gg.id_grano_report) AND (id_zona = xx.id_zona) AND (id_campaña = @id_campaña)) / 100 AS superficie_3,
+                      (SELECT primera
+                       FROM      Superficie_retaa_x_campaña_grano AS Superficie_retaa_x_campaña_grano_2
+                       WHERE   (id_grano =
+                                             (SELECT id_grano_report
+                                              FROM      Tipo_grano AS Tipo_grano_2
+                                              WHERE   (id = xx.id_grano))) AND (id_campaña = @id_campaña) AND (id_zona = xx.id_zona)) *
+                      (SELECT superficie
+                       FROM      Superficie_retaa_x_campaña_grano AS Superficie_retaa_x_campaña_grano_3
+                       WHERE   (id_grano = gg.id_grano_report) AND (id_zona = xx.id_zona) AND (id_campaña = @id_campaña)) / 100 AS Pas_primera_superficie,
+                      (SELECT segunda
+                       FROM      Superficie_retaa_x_campaña_grano AS Superficie_retaa_x_campaña_grano_1
+                       WHERE   (id_grano =
+                                             (SELECT id_grano_report
+                                              FROM      Tipo_grano AS Tipo_grano_1
+                                              WHERE   (id = xx.id_grano))) AND (id_campaña = @id_campaña) AND (id_zona = xx.id_zona)) *
+                      (SELECT superficie
+                       FROM      Superficie_retaa_x_campaña_grano AS Superficie_retaa_x_campaña_grano_4
+                       WHERE   (id_grano = gg.id_grano_report) AND (id_zona = xx.id_zona) AND (id_campaña = @id_campaña)) / 100 AS pas_segunda_superficie, cc.tipo_unidad, CASE WHEN cc.id_tipo_pregunta = 7 OR
+                  cc.id_tipo_pregunta = 6 THEN
+                      (SELECT TOP (1) Coeficiente
+                       FROM      Tipo_caracteristicas_retaa
+                       WHERE   id_caract = cc.id_caract) ELSE '-1' END AS coeficiente, l.descripcion AS campaña
+FROM     Granos_zonas_retaa AS xx LEFT OUTER JOIN
+                  Tipo_zona_retaa AS zz ON xx.id_zona = zz.id_zona LEFT OUTER JOIN
+                  Tipo_nivel AS nn ON xx.id_nivel = nn.id_nivel LEFT OUTER JOIN
+                  Tipo_grano AS gg ON xx.id_grano = gg.id LEFT OUTER JOIN
+                  Tipo_caracteristicas_retaa AS cc ON xx.id_grano = cc.id_grano AND cc.id_tipo_pregunta IN
+                      (SELECT c.id_tipo_pregunta
+                       FROM      tipo_pregunta_retaa AS p LEFT OUTER JOIN
+                                         Tipo_caracteristicas_retaa AS c ON p.id = c.id_tipo_pregunta
+                       WHERE   (p.id_filtro IN (@id_consulta)) AND (c.id_grano = xx.id_grano)
+                       GROUP BY c.id_tipo_pregunta) LEFT OUTER JOIN
+                  Año_campañas AS l ON cc.id_campaña = l.id
+WHERE  (xx.id_grano IN (@id_grano)) AND (xx.id_zona IN (@id_zona)) AND (xx.id_nivel IN (@id_nivel)) AND (cc.id_caract_2 <> 104) AND (cc.id_caract_2 <> 105) AND (cc.id_caract_2 <> 106) AND (cc.id_caract_2 <> 107) AND (cc.id_caract_2 <> 108) AND 
+                  (cc.id_caract_2 <> 65) AND (cc.id_campaña = @id_campaña);")
+
+
+consulta_Ruben
+```
+
+### Paquete `DBI`
+
+DBI permite conectarno a la base de datos de SQL. Para hacerlo debemos configurar los campos. La conexión se puede verificar en el panel superior derecho.
+
+La base datos del ReTAA esta compuesta por 6 tablas principales "Año Campañas", "cabecera_trnsacciones_retaa",  "caract_id_grano", "caract_id_grano_campaÃ±a_vista", "Colaboradores"  y "Granos_zonas_retaa".
+
+```{r, echo=TRUE}
+#Me conecto a la base
+con <- DBI::dbConnect(odbc::odbc(),
+                      Driver    = "SQL Server", 
+                      Server    = "BC-RETA",
+                      Database  = "Estimaciones_copia",
+                      UID       = "estimaciones_consulta",
+                      PWD       = "Esti.bc.201923",
+                      Port      = 1433,
+                      dbname = "Estimaciones_Copia",
+                      encoding = "latin1")
+
+DBI::dbListTables(con)[1:6]#lista de las tablas de la base
+```
+ 
+la función `tbl` de `dplyr` trae las tablas de la base de datos. Tambien podemos aplicar a esta tabla todas las funciones que vimos en las clases previas.
+
+Veamos algunas de las tablas que conforman la base del ReTAA.
+
+
+#### Tabla Tipo_grano
+```{r, echo=TRUE}
+#Tabla id grano
+Tipo_grano <-  tbl(con, c("Tipo_grano")) %>% 
+  select(id,descripcion) %>% rename(id_grano = id, descripcion_grano = descripcion) %>% filter(id_grano>0)
+Tipo_grano 
+```
+
+#### Tabla Año_campañas
+```{r, echo=TRUE}
+#selecciono tabla id campaña
+Anio_campanias <-  tbl(con, c("Año_campañas")) %>% rename(id_campania = id, descripcion_campania = descripcion) %>% filter(id_campania>0)
+
+Anio_campanias 
+```
+
+#### Tabla Tipo_zona_retaa
+```{r, echo=TRUE}
+#cabecera_transacciones_retaa
+Tipo_zona_retaa <- tbl(con, c("Tipo_zona_retaa")) %>% select(id_zona,descripcion,descripcion2) %>% rename(descripcion_zona_retaa = descripcion,
+       descripcion_zona_retaa2 = descripcion2)
+Tipo_zona_retaa  %>% head(10)
+```
+
+
+
+#### Tabla cabecera_transacciones_retaa
+```{r, echo=TRUE}
+#cabecera_transacciones_retaa
+cabecera_transacciones_retaa <- tbl(con, c("cabecera_transacciones_retaa")) %>% select(id_trans,id_colaborador,estado)
+cabecera_transacciones_retaa  %>% head(10)
+```
+
+#### Tabla tipo_pregunta_retaa
+```{r, echo=TRUE}
+#cabecera_transacciones_retaa
+tipo_pregunta_retaa <- tbl(con, c("tipo_pregunta_retaa")) %>% 
+  select(id,descripcion) %>% rename(id_pregunta = id, descripcion_pregunta = descripcion) %>% as_tibble()
+tipo_pregunta_retaa
+```
+
+#### Tabla tipo_caracteristica_retaa
+```{r, echo=TRUE}
+#cabecera_transacciones_retaa
+Tipo_caracteristicas_retaa <- tbl(con, c("Tipo_caracteristicas_retaa_trans"))
+Tipo_caracteristicas_retaa
+```
+
+
+#### Tabla Colaboradores
+
+```{r, echo=TRUE}
+#Tabla Colaboradores
+Colaboradores <- tbl(con, c("Colaboradores"))
+Colaboradores %>% variable.names()
+```
+
+Tambien podemos visualizar las conexxiones entre las tablas con el paquete `datamodelr` que nos permite construir diagramas entidad-realación
+
+```{r, fig.height=9, fig.width=9}
+library(datamodelr) #paquete para armar diagrama de entidad relacion
+
+coneccion <- odbcDriverConnect(
+  connection = "Driver=SQL Server; Server=BC-RETA; Database=Estimaciones_copia; UID=estimaciones_consulta; Pwd=Esti.bc.201923"
+  )
+
+sQuery <- dm_re_query("sqlserver")
+dm_retaa <- sqlQuery(channel = coneccion, sQuery, stringsAsFactors = FALSE, errors=TRUE)
+dm_retaa <- as.data_model(dm_retaa) #paso a formato modelo
+
+focus <-list(tables  = c("Año_campañas","cabecera_transacciones_retaa","caract_id_grano",               
+"caract_id_grano_campaña_vista","Colaboradores","Granos_zonas_retaa")) 
+ 
+graph <- dm_create_graph(dm_retaa , rankdir = "BT", focus = focus, col_attr = c("column", "type")) 
+dm_render_graph(graph) #grafico
+```
+
+
+### Query SQL vs dplyr
+
+En esta seccion vamos a replicar la consulta SQL que vimos arriba pero en fomrato dplyr. Vamos a ver que una consulta muy extensa se puede realizar en una fomra más prolija y breve.
+
+El comando`show_query` permite extraer la consulta en formato SQL.
+
+```{r echo=TRUE}
+tabla_consulta_sql <- Tipo_caracteristicas_retaa %>%  
+  left_join(cabecera_transacciones_retaa,by = c("id_trans","id_colaborador")) %>% #join con tabla cabecera
+  left_join(Tipo_grano ,by = "id_grano") %>%
+  left_join(Anio_campanias ,by = c("id_campaña"="id_campania") ) %>%
+  left_join(Tipo_zona_retaa, by = c("id_zona")  ) %>% 
+  filter(id_campaña == 9,id_zona==5,nivel==1,id_grano==1,
+         id_tipo_pregunta==6, max_estado == 1, estado==1) %>%
+  group_by(descripcion_grano, id_grano, descripcion_campania, id_campaña, descripcion_zona_retaa, id_zona,
+          nivel, id_tipo_pregunta, id_caract,descripcion) %>% 
+  summarise(promedio_max = round(mean(max, na.rm = T),2),
+            promedio_min = round(mean(min, na.rm = T),2)) 
+
+tabla_consulta_sql %>% dplyr::show_query() #ver query SQL
+
+tabla_consulta_sql #salida
+```
+
+### Planteos Tecnologicos
+
+Construir los planteos tecnológicos suele ser un trabajo que tedioso que no esta automatizado y suele tomar bastante tiempo. En esta sección buscamos automatizar la construcción de los planteos.
+
+
+```{r echo=TRUE}
+# tabla con todas los insumos incluidos en la base
+tabla_variables <- Tipo_caracteristicas_retaa %>% distinct(descripcion,tipo_unidad) %>% as_tibble()
+
+#lista de variables incluidas
+variables_planteo <- c("Adopción de NT","max_min","nivel","id_campaña","id_grano","id_zona",
+                       "descr_grano","descr_campania","Semilla","Urea","PDA",
+                       "Glifosato concentrado - Barbecho",
+                       "Glifosato concentrado - cultivo","Hib. RR Bt2","2-4D","Dicamba",
+                       "Metsulfurón",
+                       "SPS","Atrazina","Metolaclor","Piclorám","Diamidas","Diclosulam", 
+                       "Fungicida 1 (Estrob. + Triazol)","Semilla", "Inoc. + Fungic.",
+                       "Inoculante 1 (full)","Fosforados 1", "Fosforados 2",
+                       "Curasemilla - Fungicida base","Clorimurón",
+                       "PMA","Dimetoato", "Curasemilla 2 - Fungicida",
+"Curasemilla 2 - fungic.","	
+Fungicida 2")
+```
+
+
+
+```{r}
+#Armo la consulta de planteos
+planteos <- Tipo_caracteristicas_retaa %>%  
+  filter(descripcion %in% variables_planteo) %>% #me quedo con insumos incluidos en los planteos
+  left_join(cabecera_transacciones_retaa, by = c("id_trans","id_colaborador")) %>% 
+  left_join(Tipo_zona_retaa, by=c("id_zona")) %>% 
+  left_join(Tipo_grano, by="id_grano") %>%
+  #left_join(tipo_pregunta_retaa, by = c("id_tipo_pregunta"= "id_pregunta")) %>% 
+  left_join(Anio_campanias,by=c("id_campaña"="id_campania" )) %>%
+  filter(estado==1) %>% #encuestas validadas
+  #correcion maiz tardio por carga retaa
+  mutate(id_grano = case_when( (id_grano==8 & id_zona %in% c(1,2,16) )~ 7,
+                                                     T ~ as.double(id_grano) ),
+         descripcion_grano = ifelse(id_grano==7, "Maíz 1° Temprano",descripcion_grano)
+         ) %>% 
+  mutate(max = case_when(tipo_unidad =="%" & is.na(max) ~ 0,
+                         T ~ as.numeric(max) ),
+         min = case_when(tipo_unidad =="%" & is.na(min) ~ as.numeric(max),
+         T ~ as.numeric(min)
+                         )
+         ) %>% 
+   group_by( id_campaña ,descripcion_campania , nivel, 
+             id_zona, descripcion_zona_retaa,
+             id_grano, descripcion_grano, descripcion) %>% 
+  summarise(promedio_max = mean(max, na.rm = T), #promedio maximo aplicado
+            promedio_min = mean(min, na.rm = T) #promedio minimo aplicado
+            #promedio_porc_aplic = mean(porc_aplic, na.rm = T)
+            ) %>% 
+  mutate(doble_na = ifelse( is.na(promedio_max) & is.na(promedio_min),1,0 )) %>%
+  filter(doble_na !=1) %>% 
+  mutate( promedio = (promedio_max+ promedio_min)/2) %>% 
+  select(-c(promedio_max,promedio_min) ) 
+  
+
+
+#Funcion para escalar el nivel de adopcion tecnologica
+#escalar <- function(x){ x = x/sum(x,na.rm = T) *100 }
+
+#Genero descripcion Nivel Tecnológico y escalo Adopcion de NT
+planteos <- planteos %>% as_tibble() %>% 
+  mutate(descripcion_nivel = case_when(nivel == 1 ~ "Alto",
+                                       nivel == 2 ~ "Medio",
+                                       nivel == 3 ~ "Bajo")) %>% 
+  pivot_wider(names_from = descripcion,values_from = c(promedio) ) %>% 
+  group_by(id_campaña,id_zona,id_grano)# %>%
+  #mutate(Adopcion_NT = escalar(`Adopción de NT`))   #escalo a 100 el nivel tecnologico
+
+#Paso a formato long
+planteos <- planteos %>%
+  mutate(adopcion_nt = `Adopción de NT`) %>% 
+  pivot_longer(cols = -c("id_campaña", "descripcion_campania","nivel","id_zona","descripcion_zona_retaa" ,"id_grano","descripcion_grano", "descripcion_nivel","adopcion_nt") ,names_to = "variables",values_to = "valores")
+
+Tipo_zona_retaa
+```
+
+
+```{r echo=TRUE}
+planteos_pond <- planteos %>%
+  group_by(id_campaña,descripcion_campania,id_zona, descripcion_zona_retaa,
+           id_grano,descripcion_grano,variables) %>%
+  filter(!is.na(valores) ) %>% #esto es para no contar los no contestados y calcular los planteos Retaa "promedio simple"
+  summarise(valores =  weighted.mean(valores ,w = adopcion_nt/100,na.rm = T)
+            )
+```
+
+#### Planteos {.tabset}
+
+##### Soja
+```{r echo=TRUE, fig.height=9, fig.width=9}
+variables_planteo_soja <-c("Semilla", "SPS","Glifosato concentrado - Barbecho",
+                           "Glifosato concentrado - cultivo", "2-4D","Clorimurón",
+                           "Metsulfurón","Diclosulam","Diamidas",
+                           "Estrobirulina + Triazol","Inoculante 1 (full)","Inoc. + Fungic.","Fungicida 2") 
+
+
+planteo_soja <- planteos_pond  %>% 
+  filter(descripcion_grano=="Soja 1°",variables %in% variables_planteo_soja) %>% ungroup()
+  
+  
+planteos_pond  %>% 
+  filter(descripcion_grano=="Soja 1°",variables %in% variables_planteo_soja) %>% 
+  ggplot(.,mapping = aes(y=valores,x=descripcion_campania, color=as.factor(descripcion_zona_retaa)))+ 
+  geom_point() +  facet_wrap(~variables, scales = "free_y")+
+  labs(title =  "Dosis aplicadas - Soja 1º")+
+  labs(x="Campaña", color="Zona")+
+  theme(axis.text.x = element_text(angle = 90),
+        legend.position = "bottom"
+        ) 
+
+```
+
+```{r}
+planteos  %>% 
+  filter(descripcion_grano=="Soja 1°",variables %in% variables_planteo_soja) %>% 
+  filter(descripcion_campania=="2017/2018",descripcion_zona_retaa=="III")
+```
+
+```{r}
+planteos %>% filter(variables=="Adopción de NT") %>% group_by(id_grano, descripcion_grano, descripcion_zona_retaa,descripcion_campania) %>%  summarise(adopcion = sum(valores))
+
+planteos %>% filter(descripcion_campania=="2016/2017", descripcion_zona_retaa=="III",
+                    id_grano==2, variables=="Adopción de NT")
+```
+
+##### Trigo
+```{r echo=TRUE, fig.height=9, fig.width=9}
+variables_planteo_Trigo <-c("Semilla","Urea","PMA","Glifosato concentrado - Barbecho",
+                           "2-4D","Dicamba", "Metsulfurón","Fosforados 1","Fungicida 1 (Estrob. + Triazol)",
+                           "Curasemilla 2 - Fungicida","Curasemilla 2 - fungic.") #Lambdacialotrina no lo encontré
+
+planteo_trigo <- planteos_pond  %>% 
+  filter(descripcion_grano=="Trigo",variables %in% variables_planteo_Trigo) %>% ungroup()
+  
+
+planteos_pond  %>% 
+  filter(descripcion_grano=="Trigo",variables %in% variables_planteo_Trigo) %>% 
+  ggplot(.,mapping = aes(y=valores,x=descripcion_campania, color=as.factor(descripcion_zona_retaa)))+ 
+  geom_point() +  facet_wrap(~variables, scales = "free_y")+
+  labs(title =  "Dosis aplicadas - Trigo")+
+  labs(x="Campaña", color="Zona")+
+  theme(axis.text.x = element_text(angle = 90),
+        legend.position = "bottom"
+        ) 
+```
+
+##### Maiz
+```{r, fig.height=9, fig.width=9, echo=TRUE}
+variables_planteo_Maiz <-c( "Hib. RR Bt2", "Urea","PDA","Glifosato concentrado - Barbecho",
+                           "Glifosato concentrado - cultivo", "2-4D","Atrazina",
+                           "Metolaclor","Piclorám","Diamidas",
+                           "Dicamba", "Estrobirulina + Triazol") #Lambdacialotrina no lo encontré
+
+planteo_maiz <- planteos_pond  %>% 
+  filter(descripcion_grano=="Maíz 1° Temprano",variables %in% variables_planteo_Maiz) %>% ungroup() 
+
+planteos_pond  %>% 
+  filter(descripcion_grano=="Maíz 1° Temprano",variables %in% variables_planteo_Maiz) %>% 
+  ggplot(.,mapping = aes(y=valores,x=descripcion_campania, color=as.factor(descripcion_zona_retaa)))+ 
+  geom_point() +  facet_wrap(~variables, scales = "free_y")+
+  labs(title =  "Dosis aplicadas - Maiz")+
+  labs(x="Campaña", color="Zona")+
+  theme(axis.text.x = element_text(angle = 90),
+        legend.position = "bottom"
+        ) 
+
+```
+
+#### {-}
+
+Guardo planteos
+```{r}
+library(openxlsx) #activamos la librería
+
+write.xlsx(x = planteos_pond, file = "datasets/planteos.xlsx", row.names = FALSE)
+```
+
+#### Evolución del nivel tecnológico {.tabset}
+
+##### Maiz 1º
+```{r, fig.height=9, fig.width=9, echo=TRUE}
+planteos %>% filter(descripcion_grano=="Maíz 1° Temprano", variables=="Adopción de NT") %>% 
+ggplot(.,mapping = aes(x = descripcion_campania, y = valores, group=nivel,fill = as.factor(descripcion_nivel))) +
+  geom_col() +
+  facet_wrap(~descripcion_zona_retaa)+  theme_bw()+
+  labs(title =  "Nivel tecnológico por zona - Maíz temprano")+
+  labs(x="Campaña", fill="Nivel tecnológico")+
+  theme(axis.text.x = element_text(angle = 90),
+        legend.position = "top"
+        ) 
+```
+
+##### Maiz Tardio y 2º
+```{r, fig.height=9, fig.width=9, echo=TRUE}
+planteos %>% filter(descripcion_grano=="Maíz 1° Tardio y 2°", variables=="Adopción de NT") %>% 
+ggplot(.,mapping = aes(x = descripcion_campania, y = valores, group=nivel,fill = as.factor(descripcion_nivel))) +
+  geom_col() +
+  facet_wrap(~descripcion_zona_retaa)+  theme_bw()+
+  labs(title =  "Nivel tecnológico por zona - Maíz tardío")+
+  labs(x="Campaña", fill="Nivel tecnológico")+
+  theme(axis.text.x = element_text(angle = 90),
+        legend.position = "top"
+        ) 
+```
+
+
+##### Soja
+```{r, fig.height=9, fig.width=9, echo=TRUE}
+planteos %>% filter(descripcion_grano=="Soja 1°", variables=="Adopción de NT") %>% 
+ggplot(.,mapping = aes(x = descripcion_campania, y = valores, group=nivel,fill = as.factor(descripcion_nivel))) +
+  geom_col() +
+  facet_wrap(~descripcion_zona_retaa)+  theme_bw()+
+  labs(title =  "Nivel tecnológico por zona -Soja")+
+  labs(x="Campaña", fill="Nivel tecnológico")+
+  theme(axis.text.x = element_text(angle = 90),
+        legend.position = "top"
+        ) 
+
+```
+
+##### Trigo
+```{r, fig.height=9, fig.width=9, echo=TRUE}
+planteos %>% filter(descripcion_grano=="Trigo" , variables=="Adopción de NT") %>% 
+ggplot(.,mapping = aes(x = descripcion_campania, y = valores, group=nivel,fill = as.factor(descripcion_nivel))) +
+  geom_col() +
+  facet_wrap(~descripcion_zona_retaa)+  theme_bw()+
+  labs(title =  "Nivel tecnológico por zona -Trigo")+
+  labs(x="Campaña", fill="Nivel tecnológico")+
+  theme(axis.text.x = element_text(angle = 90),
+        legend.position = "top"
+        ) 
+```
+##### Girasol
+```{r, fig.height=9, fig.width=9, echo=TRUE}
+planteos %>% filter(descripcion_grano=="Girasol" , variables=="Adopción de NT") %>% 
+ggplot(.,mapping = aes(x = descripcion_campania, y = valores, group=nivel,fill = as.factor(descripcion_nivel))) +
+  geom_col() +
+  facet_wrap(~descripcion_zona_retaa)+  theme_bw()+
+  labs(title =  "Nivel tecnológico por zona - Girasol")+
+  labs(x="Campaña", fill="Nivel tecnológico")+
+  theme(axis.text.x = element_text(angle = 90),
+        legend.position = "top"
+        ) 
+```
+##### Cebada
+```{r, fig.height=9, fig.width=9, echo=TRUE}
+planteos %>% filter(descripcion_grano=="Cebada" , variables=="Adopción de NT") %>% 
+ggplot(.,mapping = aes(x = descripcion_campania, y = valores, group=nivel,fill = as.factor(descripcion_nivel))) +
+  geom_col() +
+  facet_wrap(~descripcion_zona_retaa)+  theme_bw()+
+  labs(title =  "Nivel tecnológico por zona -Cebada")+
+  labs(x="Campaña", fill="Nivel tecnológico")+
+  theme(axis.text.x = element_text(angle = 90),
+        legend.position = "top"
+        ) 
+
+```
+
+#### {-}
+
+#### Dosis de fertilización
+
+```{r, fig.height=9, fig.width=9, echo=TRUE}
+#Grafico
+planteos %>% filter(descripcion_grano=="Maíz 1° Temprano", variables=="Urea")  %>%  #filtro cultivo
+ggplot(.,mapping = aes(x = descripcion_campania,
+                       y = valores, group=nivel,color = as.factor(descripcion_nivel))) +
+  geom_line() + geom_point()+
+  facet_wrap(~descripcion_zona_retaa) +  
+  theme_bw() +
+  labs(title =  "Fertilización con Urea (kg/ha) en Maíz temprano")+
+  labs(x="Campaña", color="Nivel tecnológico")+
+  theme(axis.text.x = element_text(angle = 90),
+        legend.position = "bottom"
+        )
+```
+
+
+```{r, fig.height=9, fig.width=9, echo=TRUE}
+#Grafico
+planteos_pond %>% filter(descripcion_grano=="Maíz 1° Temprano", variables=="Urea")  %>%  #filtro cultivo
+ggplot(.,mapping = aes(x = descripcion_campania,
+                       y = valores, group=1)) +
+  geom_line() + geom_point()+
+  facet_wrap(~descripcion_zona_retaa) +  
+  theme_bw() +
+  labs(title =  "Fertilización con Urea (kg/ha) en Maíz temprano")+
+  labs(x="Campaña", color="Nivel tecnológico")+
+  theme(axis.text.x = element_text(angle = 90),
+        legend.position = "bottom"
+        )
+```
+
+```{r, fig.height=9, fig.width=9, echo=TRUE}
+#Grafico
+planteos_pond %>% filter(descripcion_grano=="Trigo", variables=="Urea")  %>%  #filtro cultivo
+ggplot(.,mapping = aes(x = descripcion_campania,
+                       y = valores, group=1)) +
+  geom_line() + geom_point()+
+  facet_wrap(~descripcion_zona_retaa) +  
+  theme_bw() +
+  labs(title =  "Fertilización con Urea (kg/ha) en Trigo")+
+  labs(x="Campaña", color="Nivel tecnológico")+
+  theme(axis.text.x = element_text(angle = 90),
+        legend.position = "bottom"
+        )
+```
+
+### Precios
+
+https://emoriebeck.github.io/R-tutorials/purrr/#
+
+```{r}
+unique(planteos$variables) %>% write.xlsx("datasets/insumos_planteos.xlsx")
+```
+
+
+
